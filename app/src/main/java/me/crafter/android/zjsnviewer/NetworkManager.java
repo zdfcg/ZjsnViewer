@@ -20,7 +20,6 @@ import android.util.Log;
 public class NetworkManager {
 
     // TODO this class needs cleanup
-
     public static String url_init_p7 = "api/initGame&t=233&e=5f3cd4e0d30c4376f8c9685d263f5184";
     public static String url_init_zero = "api/initGame&t=233&e=5f3cd4e0d30c4376f8c9685d263f5184";
     public static String url_init_hm = "api/initGame&t=233&e=3deb25e23f5fdd11d792d63bd66ced7c";
@@ -30,6 +29,8 @@ public class NetworkManager {
     public static String url_passport_hm = "http://login.jr.moefantasy.com/index/passportLogin/";// +username/password
     public static String url_passport_hm_ios = "http://loginios.jianniang.com/index/passportLogin/";// +username/password
     public static String url_login = "index/login/";//+uid
+    public static String url_Explore = "explore/start/"; // +fleetID/+exploreID/
+    public static String url_getExploreResult = "explore/getResult/"; // +exploreID/
     public static String[] url_server_p7 = {
             "http://zj.alpha.p7game.com/",
             "http://s2.zj.p7game.com/",
@@ -70,6 +71,66 @@ public class NetworkManager {
     public static String getCurrentUnixTime() {
         long unixTime = System.currentTimeMillis() / 10L;
         return String.valueOf(unixTime);
+    }
+    public static int currentUnix(){
+        return ((int)(System.currentTimeMillis() / 1000L));
+    }
+
+    /**
+     *
+     * @param server
+     * @param loginCookie
+     * @param exploreId
+     * @param fleetId
+     * @return
+     */
+    // TODO: 6/8/2016    This should be out of NetworkManager, be apart. New Class Needed.
+    public static boolean autoExplore(String server ,String loginCookie  ,int exploreId, int fleetId) {
+        Log.i("NetworkManager", "autoExplore");
+        try {
+            //get Explore Result
+            String urString = server + url_getExploreResult + exploreId +"/";
+            URL url = new URL(urString);
+            Log.i("NetWorkManager", url.toString());
+            URLConnection connection = url.openConnection();
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
+            connection.setRequestProperty("cookie", loginCookie);
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+
+            if (response.toString().contains("\"eid\"")){
+                Log.i("autoExplore()", "get eid when get reward.");
+            }
+            // Auto Explore
+            urString = server + url_Explore + fleetId + "/" + exploreId +"/";
+            url = new URL(urString);
+            Log.i("NetWorkManager", url.toString());
+            connection = url.openConnection();
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
+            connection.setRequestProperty("cookie", loginCookie);
+
+            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            response = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+
+            if (response.toString().contains("\"eid\"")){
+                Log.i("autoExplore()", "get eid when auto explore.");
+            }
+            return true;
+        } catch (Exception ex) {
+            Log.e("autoExplore", "ERR1");
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     public static void updateDockInfo(Context context){
@@ -212,7 +273,11 @@ public class NetworkManager {
             JSONArray levels = pveExploreVo.getJSONArray("levels");
             for (int i = 0; i < levels.length(); i++){
                 JSONObject level = levels.getJSONObject(i);
-                DockInfo.dockTravelTime[level.getInt("fleetId")-1] = level.getInt("endTime");
+                int endTime = level.getInt("endTime");
+                DockInfo.dockTravelTime[level.getInt("fleetId")-1] = endTime;
+                if(endTime < currentUnix()) {
+                    autoExplore(server, loginCookie, level.getInt("exploreId"), level.getInt("fleetId"));
+                }
             }
 
             JSONArray dockVo = data.getJSONArray("dockVo");
