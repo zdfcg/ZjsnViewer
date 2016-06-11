@@ -1,6 +1,7 @@
 package me.crafter.android.zjsnviewer;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -43,41 +44,45 @@ public class TimerService extends Service {
 //        // If we get killed, after returning from here, restart
 //        return START_STICKY;
 //    }
-    private void setForeGround(Context context){
+    private void setForeGround(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefs.getBoolean("notification_foreground", true)){
-
-            String[] info = DockInfo.getTravelBoard();
-            String title = Storage.str_tiduName;
-            String msj_name = prefs.getString("notification_msj_name","");
-            if (!msj_name.isEmpty()){
-
-                Storage.language = Integer.parseInt(prefs.getString("language", "0"));
-                title = msj_name + Storage.str_msj_foreground_reportTitle[Storage.language];
-            }
-            String text = Storage.str_thereIs[Storage.language] + DockInfo.countTravelIng() + Storage.str_teamsTravelling[Storage.language];
-            String msg = "";
-            NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle()
-                    .setBigContentTitle(title)
-                    .setSummaryText(text);
-
-            for (int i = 0; i < 4; i++){
-    //            style.addLine(info[i]);
-                msg += info[i] + "\n";
-            }
-            style.bigText(msg);
-
-            final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                    .setSmallIcon(R.drawable.cat_icon)
-                    .setContentTitle(title)
-                    .setContentText(text)
-                    .setStyle(style)
-                    .setGroup(Storage.NOTIFICATION_GROUP_KEY)
-                    .setGroupSummary(true)
-                    .setContentIntent(Storage.getInfoIntent(context));
-
-            startForeground(NOTIFICATION_ID,builder.build());
+        if (prefs.getBoolean("notification_foreground", true)) {
+            startForeground(NOTIFICATION_ID, getForeGroundNotification(context));
         }
+    }
+
+    public Notification getForeGroundNotification(Context context){
+        String[] info = DockInfo.getTravelBoard();
+        String title = Storage.str_tiduName;
+        String text = Storage.str_thereIs[Storage.language] + DockInfo.countTravelIng() + Storage.str_teamsTravelling[Storage.language];
+        String msg = "";
+        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle()
+                .setBigContentTitle(title)
+                .setSummaryText(text);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String msj_name = prefs.getString("notification_msj_name","");
+        if (!msj_name.isEmpty()){
+
+            Storage.language = Integer.parseInt(prefs.getString("language", "0"));
+            title = msj_name + Storage.str_msj_foreground_reportTitle[Storage.language];
+        }
+
+        for (int i = 0; i < 4; i++){
+//            style.addLine(info[i]);
+            msg += info[i] + "\n";
+        }
+        style.bigText(msg);
+
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.cat_icon)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setStyle(style)
+                .setGroup(Storage.NOTIFICATION_GROUP_KEY)
+                .setGroupSummary(true)
+                .setContentIntent(Storage.getInfoIntent(context));
+
+        return builder.build();
     }
     @Override
     public IBinder onBind(Intent intent) {
