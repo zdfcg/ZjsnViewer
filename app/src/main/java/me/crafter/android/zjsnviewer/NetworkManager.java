@@ -78,15 +78,20 @@ public class NetworkManager {
 
     /**
      *
-     * @param server
-     * @param loginCookie
-     * @param exploreId
-     * @param fleetId
-     * @return
+     * @param context
+     * @param server 服务器地址
+     * @param loginCookie 登陆返回的cookie
+     * @param exploreId 远征区域ID
+     * @param fleetId 舰队编号
+     * @return true or false
      */
-    // TODO: 6/8/2016    This should be out of NetworkManager, be apart. New Class Needed.
-    public static boolean autoExplore(String server ,String loginCookie  ,int exploreId, int fleetId) {
-        Log.i("NetworkManager", "autoExplore");
+    //// TODO: 6/8/2016    This should be out of NetworkManager, be apart. New Class Needed.
+    //// TODO: 6/12/2016 这个类中的context是否会产生内存泄漏？ 找时间检查下，看看使用的是Application Context还是 act的context。
+    public static boolean autoExplore(Context context, String server ,String loginCookie  ,int exploreId, int fleetId) {
+        Log.d("NetworkManager", "autoExplore");
+        Log.d("NetworkManager", "check time");
+        //// TODO: 6/12/2016  Use isNoAutoExploreNow instead  isNoDisturbNow.
+        if (Storage.isNoDisturbNow(context)) return false;
         try {
             //get Explore Result
             String urString = server + url_getExploreResult + exploreId +"/";
@@ -276,7 +281,7 @@ public class NetworkManager {
                 int endTime = level.getInt("endTime");
                 DockInfo.dockTravelTime[level.getInt("fleetId")-1] = endTime;
                 if(endTime < currentUnix()) {
-                    autoExplore(server, loginCookie, level.getInt("exploreId"), level.getInt("fleetId"));
+                    autoExplore(context, server, loginCookie, level.getInt("exploreId"), level.getInt("fleetId"));
                 }
             }
 
