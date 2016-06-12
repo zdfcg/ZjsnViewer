@@ -71,7 +71,7 @@ public class NetworkManager {
         "http://s106.jr.moefantasy.com/"
     };
     public static String getCurrentUnixTime() {
-        long unixTime = System.currentTimeMillis() / 10L;
+        long unixTime = System.currentTimeMillis();
         return String.valueOf(unixTime);
     }
     public static int currentUnix(){
