@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +22,9 @@ import android.util.Log;
 public class NetworkManager {
 
     // TODO this class needs cleanup
-    public static String url_init_p7 = "api/initGame&t=233&e=5f3cd4e0d30c4376f8c9685d263f5184";
-    public static String url_init_zero = "api/initGame&t=233&e=5f3cd4e0d30c4376f8c9685d263f5184";
-    public static String url_init_hm = "api/initGame&t=233&e=3deb25e23f5fdd11d792d63bd66ced7c";
+    public static String url_init_p7 = "api/initGame";
+    public static String url_init_zero = "api/initGame";
+    public static String url_init_hm = "api/initGame";
     public static String url_passport_p7 = "http://login.alpha.p7game.com/index/passportLogin/";// +username/password
     //hm change the login in url as http://login.jianniang.com/index/passportLogin/
     //hm change the login in url as http://login.jr.moefantasy.com/index/passportLogin/ in 6/4/2016
@@ -76,6 +78,44 @@ public class NetworkManager {
         return ((int)(System.currentTimeMillis() / 1000L));
     }
 
+    public static final String md5(final String s) {
+        final String MD5 = "MD5";
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest
+                    .getInstance(MD5);
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                String h = Integer.toHexString(0xFF & aMessageDigest);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
+            }
+            return hexString.toString().substring(0, 16);
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    /**
+     *
+     * @param urString
+     * @return FinalUrl
+     */
+    public static String getFinalUrl(String urString) {
+        String FinalUrl = urString + "/&t=" + getCurrentUnixTime();
+        String market = "&market=2&channel=0&version=2.4.0";
+        //返回的是一个16位散列，暂时猜测是md5
+        String FinalMd5 = md5(FinalUrl);
+        FinalUrl += "&c=" + FinalMd5 + market;
+        return FinalUrl;
+    }
+
     /**
      *
      * @param context
@@ -94,7 +134,8 @@ public class NetworkManager {
         if (Storage.isNoDisturbNow(context)) return false;
         try {
             //get Explore Result
-            String urString = server + url_getExploreResult + exploreId +"/";
+            String urString = server + url_getExploreResult + exploreId;
+            urString = getFinalUrl(urString);
             URL url = new URL(urString);
             Log.i("NetWorkManager", url.toString());
             URLConnection connection = url.openConnection();
@@ -113,7 +154,8 @@ public class NetworkManager {
                 Log.i("autoExplore()", "get eid when get reward.");
             }
             // Auto Explore
-            urString = server + url_Explore + fleetId + "/" + exploreId +"/";
+            urString = server + url_Explore + fleetId + "/" + exploreId;
+            urString = getFinalUrl(urString);
             url = new URL(urString);
             Log.i("NetWorkManager", url.toString());
             connection = url.openConnection();
@@ -185,15 +227,16 @@ public class NetworkManager {
             // STEP 1 PASSPORT LOGIN
             URL url;
             if (serverId < 100){
-                url = new URL(url_passport_p7 +username+"/"+password);
+                url = new URL(getFinalUrl(url_passport_p7 +username+"/"+password));
             }else if (serverId < 200){
-                url = new URL(url_passport_hm +username+"/"+password);
+                url = new URL(getFinalUrl(url_passport_hm +username+"/"+password));
             }else {
-                url = new URL(url_passport_hm_ios +username+"/"+password);
+                url = new URL(getFinalUrl(url_passport_hm_ios +username+"/"+password));
             }
             if (altserver){
-                url = new URL(prefs.getString("alt_url_login", "") +username+"/"+password);
+                url = new URL(getFinalUrl(prefs.getString("alt_url_login", "") +username+"/"+password));
             }
+
             Log.i("NetWorkManager > 1", url.toString());
             URLConnection connection = url.openConnection();
             connection.setConnectTimeout(15000);
@@ -221,7 +264,7 @@ public class NetworkManager {
             int uid = obj.getInt("userId");
 
             // STEP 2 UID SERVER LOGIN
-            url = new URL(server + url_login + uid);
+            url = new URL(getFinalUrl(server + url_login + uid));
             Log.i("NetWorkManager > 2", url.toString());
             connection = url.openConnection();
             connection.setConnectTimeout(15000);
@@ -248,6 +291,7 @@ public class NetworkManager {
                 urString = server + url_init_hm;
             }
 
+            urString = getFinalUrl(urString);
             url = new URL(urString);
             Log.i("NetWorkManager > 3", url.toString());
             connection = url.openConnection();
