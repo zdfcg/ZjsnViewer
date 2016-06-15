@@ -295,7 +295,7 @@ public class NetworkManager {
                 response.append(inputLine);
             }
 
-            if (connection.toString().contains("\"eid\"")){
+            if (response.toString().contains("\"eid\"")){
                 error = Storage.str_badLogin[Storage.language];
             }
 
