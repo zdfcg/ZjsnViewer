@@ -1,15 +1,27 @@
 package me.crafter.android.zjsnviewer;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.InflaterInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,6 +29,7 @@ import org.json.JSONObject;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -77,6 +90,30 @@ public class NetworkManager {
         return ((int)(System.currentTimeMillis() / 1000L));
     }
 
+    //将gzip压缩的字符串解压
+    //加入gz=1返回的应该不是gzip？
+    //java.io.IOException: unknown format (magic number da78)
+    //问题解决，不要使用GZIPInputStream， 78da - data compressed by "zlib.zlibConst.Z_BEST_COMPRESSION" (or int=9) marker
+    //使用InflaterInputStream 代替 GZIPInputStream
+    public static InputStream decompress(InputStream in) {
+        return new InflaterInputStream(in);
+        /*
+        try {
+        GZIPInputStream gis = new GZIPInputStream(in);
+        BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+        String outStr = "";
+        String line;
+        while ((line=bf.readLine())!=null) {
+            outStr += line;
+        }
+        return outStr;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return "ERR1";
+    */
+}
+
     public static final String md5(final String s) {
         final String MD5 = "MD5";
         try {
@@ -108,7 +145,7 @@ public class NetworkManager {
      */
     public static String getFinalUrl(String urString) {
         String FinalUrl = urString + "/&t=" + getCurrentUnixTime();
-        String market = "&market=2&channel=0&version=2.4.0";
+        String market = "&gz=1&market=2&channel=0&version=2.4.0";
         //返回的是一个16位散列，暂时猜测是md5
         String FinalMd5 = md5(FinalUrl);
         FinalUrl += "&e=" + FinalMd5 + market;
@@ -142,7 +179,9 @@ public class NetworkManager {
             connection.setReadTimeout(15000);
             connection.setRequestProperty("cookie", loginCookie);
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            decompress(connection.getInputStream()), "UTF-8"));
             String inputLine;
             StringBuffer response = new StringBuffer();
             while ((inputLine = in.readLine()) != null) {
@@ -162,7 +201,9 @@ public class NetworkManager {
             connection.setReadTimeout(15000);
             connection.setRequestProperty("cookie", loginCookie);
 
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            in =  new BufferedReader(
+                    new InputStreamReader(
+                            decompress(connection.getInputStream()), "UTF-8"));
             response = new StringBuffer();
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
@@ -243,7 +284,10 @@ public class NetworkManager {
             connection.setConnectTimeout(15000);
             connection.setReadTimeout(15000);
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            decompress(connection.getInputStream()), "UTF-8"));
             String inputLine;
             StringBuffer response = new StringBuffer();
 
@@ -251,7 +295,7 @@ public class NetworkManager {
                 response.append(inputLine);
             }
 
-            if (response.toString().contains("\"eid\"")){
+            if (connection.toString().contains("\"eid\"")){
                 error = Storage.str_badLogin[Storage.language];
             }
 
@@ -274,7 +318,9 @@ public class NetworkManager {
             cookies = connection.getHeaderFields().get("Set-Cookie");
             loginCookie = parseCookie(cookies, cookieMap);
 
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            in = new BufferedReader(
+                    new InputStreamReader(
+                            decompress(connection.getInputStream()), "UTF-8"));
             //String inputLine;
             response = new StringBuffer();
             while ((inputLine = in.readLine()) != null) {
@@ -293,23 +339,18 @@ public class NetworkManager {
         } catch (Exception ex) {
             Log.e("UpdateDockInfo()", "ERR1");
             ex.printStackTrace();
-            if (error.equals("")){
+            if (error.equals("")) {
                 Storage.str_tiduName = Storage.str_badConnection[Storage.language];
             } else {
                 Storage.str_tiduName = error;
             }
-            if (DockInfo.updateInterval > 90){
-                DockInfo.updateInterval = 90;
-            } else {
-                DockInfo.updateInterval += 15;
-            }
         }
-
 
     }
     private static void initGame(Context context ,String server, String loginCookie){
         String urString;
         urString = server + url_init;
+        String error = "";
         try {
             urString = getFinalUrl(urString);
             URL url = new URL(urString);
@@ -320,7 +361,9 @@ public class NetworkManager {
             connection.setReadTimeout(15000);
             connection.setRequestProperty("cookie", loginCookie);
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            decompress(connection.getInputStream()), "UTF-8"));
             // String inputLine;
             StringBuffer response = new StringBuffer();
             String inputLine;
@@ -332,7 +375,7 @@ public class NetworkManager {
             JSONObject data = new JSONObject(response.toString());
 
             if (!data.has("userVo")){
-                String error = Storage.str_noUserData[Storage.language];
+                error = Storage.str_noUserData[Storage.language];
             }
 
             Storage.str_tiduName = data.getJSONObject("userVo").getString("username");
@@ -390,6 +433,11 @@ public class NetworkManager {
         } catch (Exception ex) {
             Log.e("initGame", "ERR1");
             ex.printStackTrace();
+            if (ex.equals("")){
+                Storage.str_tiduName = Storage.str_badConnection[Storage.language];
+            } else {
+                Storage.str_tiduName = error;
+            }
         }
     }
 
