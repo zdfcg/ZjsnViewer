@@ -36,9 +36,7 @@ import android.util.Log;
 public class NetworkManager {
 
     // TODO this class needs cleanup
-    public static String url_init_p7 = "api/initGame";
-    public static String url_init_zero = "api/initGame";
-    public static String url_init_hm = "api/initGame";
+    public static String url_init = "api/initGame";
     public static String url_passport_p7 = "http://login.alpha.p7game.com/index/passportLogin/";// +username/password
     //hm change the login in url as http://login.jianniang.com/index/passportLogin/
     //hm change the login in url as http://login.jr.moefantasy.com/index/passportLogin/ in 6/4/2016
@@ -214,6 +212,8 @@ public class NetworkManager {
             if (response.toString().contains("\"eid\"")){
                 Log.i("autoExplore()", "get eid when auto explore.");
             }
+//          sleep 1 second after send 1 explore
+            Thread.sleep(1000);
             return true;
         } catch (Exception ex) {
             Log.e("autoExplore", "ERR1");
@@ -329,33 +329,49 @@ public class NetworkManager {
             in.close();
 
             // STEP 3 GET USER DATA
-            String urString;
-            if (serverId == 0){
-                urString = server + url_init_zero;
-            } else if (serverId < 100){
-                urString = server + url_init_p7;
-            } else {
-                urString = server + url_init_hm;
-            }
+            initGame(context, server, loginCookie);
 
+//            if (WeatherGuard.yes){
+//                DockInfo.updateInterval = Math.min(DockInfo.updateInterval, 305);
+//                WeatherGuard.dash(data, server, loginCookie);
+//            }
+
+        } catch (Exception ex) {
+            Log.e("UpdateDockInfo()", "ERR1");
+            ex.printStackTrace();
+            if (error.equals("")) {
+                Storage.str_tiduName = Storage.str_badConnection[Storage.language];
+            } else {
+                Storage.str_tiduName = error;
+            }
+        }
+
+    }
+    private static void initGame(Context context ,String server, String loginCookie){
+        String urString;
+        urString = server + url_init;
+        String error = "";
+        try {
             urString = getFinalUrl(urString);
-            url = new URL(urString);
+            URL url = new URL(urString);
             Log.i("NetWorkManager > 3", url.toString());
+            URLConnection connection;
             connection = url.openConnection();
             connection.setConnectTimeout(15000);
             connection.setReadTimeout(15000);
             connection.setRequestProperty("cookie", loginCookie);
 
-            in = new BufferedReader(
+            BufferedReader in = new BufferedReader(
                     new InputStreamReader(
                             decompress(connection.getInputStream()), "UTF-8"));
             // String inputLine;
-            response = new StringBuffer();
+            StringBuffer response = new StringBuffer();
+            String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
             in.close();
-//          Log.i("NetworkManager", response.toString());
+    //          Log.i("NetworkManager", response.toString());
             JSONObject data = new JSONObject(response.toString());
 
             if (!data.has("userVo")){
@@ -369,14 +385,18 @@ public class NetworkManager {
 
             JSONObject pveExploreVo = data.getJSONObject("pveExploreVo");
             JSONArray levels = pveExploreVo.getJSONArray("levels");
+            boolean shouldExplore = false;
             for (int i = 0; i < levels.length(); i++){
                 JSONObject level = levels.getJSONObject(i);
                 int endTime = level.getInt("endTime");
                 DockInfo.dockTravelTime[level.getInt("fleetId")-1] = endTime;
                 if(endTime < currentUnix()) {
                     autoExplore(context, server, loginCookie, level.getInt("exploreId"), level.getInt("fleetId"));
+                    shouldExplore = true;
                 }
             }
+//            TODO 如果远征了立刻刷新一遍状态，但是太暴力，需要有更好的方法
+            if (shouldExplore) initGame(context, server, loginCookie);
 
             JSONArray dockVo = data.getJSONArray("dockVo");
             JSONArray repairDockVo = data.getJSONArray("repairDockVo");
@@ -410,28 +430,15 @@ public class NetworkManager {
             Log.i("NetworkManager", "Update successful");
             DockInfo.updateInterval += 75;
             DockInfo.updateInterval = Math.min(DockInfo.updateInterval, 1210);
-
-//            if (WeatherGuard.yes){
-//                DockInfo.updateInterval = Math.min(DockInfo.updateInterval, 305);
-//                WeatherGuard.dash(data, server, loginCookie);
-//            }
-
         } catch (Exception ex) {
-            Log.e("UpdateDockInfo()", "ERR1");
+            Log.e("initGame", "ERR1");
             ex.printStackTrace();
-            if (error.equals("")){
+            if (ex.equals("")){
                 Storage.str_tiduName = Storage.str_badConnection[Storage.language];
             } else {
                 Storage.str_tiduName = error;
             }
-            if (DockInfo.updateInterval > 90){
-                DockInfo.updateInterval = 90;
-            } else {
-                DockInfo.updateInterval += 15;
-            }
         }
-
-
     }
 
     private static String parseCookie(List<String> cookies, Map<String, String> cookieMap) {
