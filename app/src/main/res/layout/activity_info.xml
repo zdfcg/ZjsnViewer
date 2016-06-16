@@ -19,7 +19,7 @@
             <android.support.v7.widget.Toolbar
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/toobar"
+                android:id="@+id/toolbar"
                 app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -289,8 +289,7 @@
                     android:gravity="center|start"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/unavailable"
-                    android:textColor="@color/font_black"
-                    android:visibility="gone"/>
+                    android:textColor="@color/font_black"/>
 
             </LinearLayout>
 
