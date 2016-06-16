@@ -28,7 +28,7 @@ import butterknife.ButterKnife;
 import me.crafter.android.zjsnviewer.util.DockInfo;
 import me.crafter.android.zjsnviewer.R;
 import me.crafter.android.zjsnviewer.config.Storage;
-import me.crafter.android.zjsnviewer.service.UpdateTask;
+import me.crafter.android.zjsnviewer.service.task.UpdateTask;
 import me.crafter.android.zjsnviewer.ui.web.WebActivity;
 import me.crafter.android.zjsnviewer.ui.preference.main.ZjsnViewer;
 import me.crafter.android.zjsnviewer.ui.info.infofragment.BuildFragment;

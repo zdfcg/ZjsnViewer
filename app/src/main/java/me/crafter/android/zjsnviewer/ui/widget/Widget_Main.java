@@ -13,8 +13,8 @@ import android.widget.RemoteViews;
 import me.crafter.android.zjsnviewer.util.DockInfo;
 import me.crafter.android.zjsnviewer.R;
 import me.crafter.android.zjsnviewer.config.Storage;
-import me.crafter.android.zjsnviewer.service.TimerService;
-import me.crafter.android.zjsnviewer.service.UpdateTask;
+import me.crafter.android.zjsnviewer.service.service.TimerService;
+import me.crafter.android.zjsnviewer.service.task.UpdateTask;
 import me.crafter.android.zjsnviewer.util.Worker;
 
 public class Widget_Main extends AppWidgetProvider {

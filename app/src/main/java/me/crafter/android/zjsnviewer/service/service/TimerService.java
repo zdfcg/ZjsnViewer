@@ -1,4 +1,4 @@
-package me.crafter.android.zjsnviewer.service;
+package me.crafter.android.zjsnviewer.service.service;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -25,7 +25,7 @@ import java.util.TimerTask;
 import me.crafter.android.zjsnviewer.util.DockInfo;
 import me.crafter.android.zjsnviewer.util.NotificationSender;
 import me.crafter.android.zjsnviewer.R;
-import me.crafter.android.zjsnviewer.ui.widget.ScreenReceiver;
+import me.crafter.android.zjsnviewer.service.receiver.ScreenReceiver;
 import me.crafter.android.zjsnviewer.config.Storage;
 import me.crafter.android.zjsnviewer.ui.widget.Widget_Build;
 import me.crafter.android.zjsnviewer.ui.widget.Widget_Main;

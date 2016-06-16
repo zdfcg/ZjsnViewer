@@ -3,7 +3,7 @@ package me.crafter.android.zjsnviewer;
 import android.app.Application;
 import android.content.Intent;
 
-import me.crafter.android.zjsnviewer.service.TimerService;
+import me.crafter.android.zjsnviewer.service.service.TimerService;
 
 /**
  * @author traburiss

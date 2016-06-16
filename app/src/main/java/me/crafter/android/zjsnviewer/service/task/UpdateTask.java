@@ -1,9 +1,10 @@
-package me.crafter.android.zjsnviewer.service;
+package me.crafter.android.zjsnviewer.service.task;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 
+import me.crafter.android.zjsnviewer.service.service.TimerService;
 import me.crafter.android.zjsnviewer.util.DockInfo;
 import me.crafter.android.zjsnviewer.ui.widget.Widget_Build;
 import me.crafter.android.zjsnviewer.ui.widget.Widget_Main;

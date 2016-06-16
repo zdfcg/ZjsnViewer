@@ -1,8 +1,14 @@
-package me.crafter.android.zjsnviewer.ui.widget;
+package me.crafter.android.zjsnviewer.service.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import me.crafter.android.zjsnviewer.ui.widget.Widget_Build;
+import me.crafter.android.zjsnviewer.ui.widget.Widget_Main;
+import me.crafter.android.zjsnviewer.ui.widget.Widget_Make;
+import me.crafter.android.zjsnviewer.ui.widget.Widget_Repair;
+import me.crafter.android.zjsnviewer.ui.widget.Widget_Travel;
 
 public class ScreenReceiver extends BroadcastReceiver {
     public ScreenReceiver() {

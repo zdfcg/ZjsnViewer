@@ -10,7 +10,7 @@ import android.widget.RemoteViews;
 
 import me.crafter.android.zjsnviewer.util.DockInfo;
 import me.crafter.android.zjsnviewer.R;
-import me.crafter.android.zjsnviewer.service.TimerService;
+import me.crafter.android.zjsnviewer.service.service.TimerService;
 import me.crafter.android.zjsnviewer.util.Worker;
 
 

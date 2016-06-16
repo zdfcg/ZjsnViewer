@@ -68,12 +68,12 @@
                 android:resource="@xml/widget__main_info" />
         </receiver>
 
-        <service android:name=".service.TimerService">
+        <service android:name=".service.service.TimerService">
 
         </service>
 
         <receiver
-            android:name=".ui.widget.ScreenReceiver"
+            android:name=".service.receiver.ScreenReceiver"
             android:enabled="true"
             android:exported="true">
 

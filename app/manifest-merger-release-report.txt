@@ -80,11 +80,11 @@ ADDED from AndroidManifest.xml:58:9
 		ADDED from AndroidManifest.xml:60:13
 	android:name
 		ADDED from AndroidManifest.xml:59:13
-service#me.crafter.android.zjsnviewer.service.TimerService
+service#me.crafter.android.zjsnviewer.service.service.TimerService
 ADDED from AndroidManifest.xml:70:9
 	android:name
 		ADDED from AndroidManifest.xml:70:18
-receiver#me.crafter.android.zjsnviewer.ui.widget.ScreenReceiver
+receiver#me.crafter.android.zjsnviewer.service.receiver.ScreenReceiver
 ADDED from AndroidManifest.xml:73:9
 	android:exported
 		ADDED from AndroidManifest.xml:76:13
