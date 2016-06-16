@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInstaller;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -12,6 +13,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
@@ -19,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.zip.InflaterInputStream;
 
 import me.crafter.android.zjsnviewer.config.Storage;
@@ -145,37 +149,60 @@ public class NetworkManager {
     public static class OperateSession{
         public String urlString;
         public String cookie;
+        public URLConnection connection;
+        private String response;
         OperateSession(String urString, String loginCookie){
             urlString = urString;
             cookie = loginCookie;
         }
+
+        OperateSession(String urString){
+            urlString = urString;
+            cookie = "";
+        }
         public String open(){
+            response = "";
             try {
                 urlString = getFinalUrl(urlString);
                 URL url = new URL(urlString);
-                Log.i("NetWorkManager", url.toString());
-                URLConnection connection = url.openConnection();
+                Log.i("Session", url.toString());
+                connection = url.openConnection();
                 connection.setConnectTimeout(15000);
                 connection.setReadTimeout(15000);
-                connection.setRequestProperty("cookie", cookie);
+                connection.setDoOutput(false);
+                if (!cookie.equals("")) connection.setRequestProperty("cookie", cookie);
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(
                                 decompress(connection.getInputStream()), "UTF-8"));
                 String inputLine;
-                String response = "";
                 while ((inputLine = in.readLine()) != null) {
                     response += inputLine;
                 }
-
+                in.close();
                 if (response.contains("\"eid\"")){
-                    Log.i("autoExplore()", "get eid when get reward.");
+                    Log.i("Session", "get eid when get reward.");
                 }
 
-                return response;
             }catch (Exception ex) {
-                Log.e("UpdateDockInfo()", "ERR1");
+                Log.e("Session", ex.toString());
             }
+            // force sleep 3s after every network operation
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e){
 
+            }
+            return response;
+        }
+
+
+        public String getCookie(){
+            try{
+                List<String> cookies = connection.getHeaderFields().get("Set-Cookie");
+                return TextUtils.join(";",cookies);
+            } catch (Exception ex) {
+                Log.e("Session", "can not get cookie");
+            }
             return "";
         }
     }
@@ -262,66 +289,32 @@ public class NetworkManager {
 
         try {
             // STEP 1 PASSPORT LOGIN
-            URL url;
+            String url;
             if (serverId < 100){
-                url = new URL(getFinalUrl(url_passport_p7 +username+"/"+password));
+                url = url_passport_p7 +username+"/"+password;
             }else if (serverId < 200){
-                url = new URL(getFinalUrl(url_passport_hm +username+"/"+password));
+                url = url_passport_hm +username+"/"+password;
             }else {
-                url = new URL(getFinalUrl(url_passport_hm_ios +username+"/"+password));
+                url = url_passport_hm_ios +username+"/"+password;
             }
             if (altserver){
-                url = new URL(getFinalUrl(prefs.getString("alt_url_login", "") +username+"/"+password));
+                url = prefs.getString("alt_url_login", "") +username+"/"+password;
             }
+            OperateSession workingSession = new OperateSession(url);
+            String response = workingSession.open();
+            String loginCookie = workingSession.getCookie();
 
-            Log.i("NetWorkManager > 1", url.toString());
-            URLConnection connection = url.openConnection();
-            connection.setConnectTimeout(15000);
-            connection.setReadTimeout(15000);
-
-
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            decompress(connection.getInputStream()), "UTF-8"));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-
-            if (response.toString().contains("\"eid\"")){
-                error = Storage.str_badLogin[Storage.language];
-            }
-
-            List<String> cookies = connection.getHeaderFields().get("Set-Cookie");
-            Map<String, String> cookieMap = new HashMap<>();
-            String loginCookie = parseCookie(cookies, cookieMap);
-
-            in.close();
-
-            JSONObject obj = new JSONObject(response.toString());
+            JSONObject obj = new JSONObject(response);
             int uid = obj.getInt("userId");
 
             // STEP 2 UID SERVER LOGIN
-            url = new URL(getFinalUrl(server + url_login + uid));
-            Log.i("NetWorkManager > 2", url.toString());
-            connection = url.openConnection();
-            connection.setConnectTimeout(15000);
-            connection.setReadTimeout(15000);
-            connection.setRequestProperty("cookie", loginCookie);
-            cookies = connection.getHeaderFields().get("Set-Cookie");
-            loginCookie = parseCookie(cookies, cookieMap);
+            url = server + url_login + uid;
+            workingSession.urlString = url;
+            workingSession.cookie = loginCookie;
 
-            in = new BufferedReader(
-                    new InputStreamReader(
-                            decompress(connection.getInputStream()), "UTF-8"));
-            //String inputLine;
-            response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
+            response = workingSession.open();
+//            loginCookie = workingSession.getCookie();
+
 
             // STEP 3 GET USER DATA
             initGame(context, server, loginCookie);
@@ -347,27 +340,10 @@ public class NetworkManager {
         urString = server + url_init;
         String error = "";
         try {
-            urString = getFinalUrl(urString);
-            URL url = new URL(urString);
-            Log.i("NetWorkManager > 3", url.toString());
-            URLConnection connection;
-            connection = url.openConnection();
-            connection.setConnectTimeout(15000);
-            connection.setReadTimeout(15000);
-            connection.setRequestProperty("cookie", loginCookie);
-
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            decompress(connection.getInputStream()), "UTF-8"));
-            // String inputLine;
-            StringBuffer response = new StringBuffer();
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
+            OperateSession workingSession = new OperateSession(urString, loginCookie);
+            String response = workingSession.open();
     //          Log.i("NetworkManager", response.toString());
-            JSONObject data = new JSONObject(response.toString());
+            JSONObject data = new JSONObject(response);
 
             if (!data.has("userVo")){
                 error = Storage.str_noUserData[Storage.language];
@@ -434,22 +410,5 @@ public class NetworkManager {
                 Storage.str_tiduName = error;
             }
         }
-    }
-
-    private static String parseCookie(List<String> cookies, Map<String, String> cookieMap) {
-        for (String cookie : cookies) {
-            String[] token = cookie.split("=");
-            cookieMap.put(token[0], cookie);
-        }
-        StringBuffer sb = new StringBuffer();
-        int size = cookieMap.size();
-        int count = 0;
-        for (String cookie : cookieMap.values()) {
-            sb.append(cookie);
-            if (++count != size) {
-                sb.append(";");
-            }
-        }
-        return sb.toString();
     }
 }
