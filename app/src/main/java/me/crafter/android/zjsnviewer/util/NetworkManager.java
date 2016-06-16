@@ -2,6 +2,7 @@ package me.crafter.android.zjsnviewer.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInstaller;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -141,6 +142,43 @@ public class NetworkManager {
         return FinalUrl;
     }
 
+    public static class OperateSession{
+        public String urlString;
+        public String cookie;
+        OperateSession(String urString, String loginCookie){
+            urlString = urString;
+            cookie = loginCookie;
+        }
+        public String open(){
+            try {
+                urlString = getFinalUrl(urlString);
+                URL url = new URL(urlString);
+                Log.i("NetWorkManager", url.toString());
+                URLConnection connection = url.openConnection();
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(15000);
+                connection.setRequestProperty("cookie", cookie);
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(
+                                decompress(connection.getInputStream()), "UTF-8"));
+                String inputLine;
+                String response = "";
+                while ((inputLine = in.readLine()) != null) {
+                    response += inputLine;
+                }
+
+                if (response.contains("\"eid\"")){
+                    Log.i("autoExplore()", "get eid when get reward.");
+                }
+
+                return response;
+            }catch (Exception ex) {
+                Log.e("UpdateDockInfo()", "ERR1");
+            }
+
+            return "";
+        }
+    }
     /**
      *
      * @param context
@@ -157,58 +195,26 @@ public class NetworkManager {
         Log.d("NetworkManager", "check time");
         //// TODO: 6/12/2016  Use isNoAutoExploreNow instead  isNoDisturbNow.
         if (Storage.isNoDisturbNow(context)) return false;
-        try {
-            //get Explore Result
-            String urString = server + url_getExploreResult + exploreId;
-            urString = getFinalUrl(urString);
-            URL url = new URL(urString);
-            Log.i("NetWorkManager", url.toString());
-            URLConnection connection = url.openConnection();
-            connection.setConnectTimeout(15000);
-            connection.setReadTimeout(15000);
-            connection.setRequestProperty("cookie", loginCookie);
 
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            decompress(connection.getInputStream()), "UTF-8"));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
+        String urString = server + url_getExploreResult + exploreId;
+        OperateSession exploreSession = new OperateSession(urString,loginCookie);
+        String response;
+        response = exploreSession.open();
 
-            if (response.toString().contains("\"eid\"")){
-                Log.i("autoExplore()", "get eid when get reward.");
-            }
-            // Auto Explore
-            urString = server + url_Explore + fleetId + "/" + exploreId;
-            urString = getFinalUrl(urString);
-            url = new URL(urString);
-            Log.i("NetWorkManager", url.toString());
-            connection = url.openConnection();
-            connection.setConnectTimeout(15000);
-            connection.setReadTimeout(15000);
-            connection.setRequestProperty("cookie", loginCookie);
-
-            in =  new BufferedReader(
-                    new InputStreamReader(
-                            decompress(connection.getInputStream()), "UTF-8"));
-            response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-
-            if (response.toString().contains("\"eid\"")){
-                Log.i("autoExplore()", "get eid when auto explore.");
-            }
-//          sleep 1 second after send 1 explore
-            Thread.sleep(1000);
-            return true;
-        } catch (Exception ex) {
-            Log.e("autoExplore", "ERR1");
-            ex.printStackTrace();
+        if (response.contains("\"eid\"")){
+            Log.i("autoExplore()", "get eid when get reward.");
             return false;
         }
+        // Auto Explore
+        urString = server + url_Explore + fleetId + "/" + exploreId;
+        exploreSession.urlString = urString;
+
+        response = exploreSession.open();
+        if (response.contains("\"eid\"")){
+            Log.i("autoExplore()", "get eid when auto explore.");
+            return false;
+        }
+        return true;
     }
 
     public static void updateDockInfo(Context context){
