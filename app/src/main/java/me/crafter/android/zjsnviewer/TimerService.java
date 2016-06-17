@@ -78,6 +78,7 @@ public class TimerService extends Service {
                 .setContentTitle(title)
                 .setContentText(text)
                 .setStyle(style)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setGroup(Storage.NOTIFICATION_GROUP_KEY)
                 .setGroupSummary(true)
                 .setContentIntent(Storage.getInfoIntent(context));
