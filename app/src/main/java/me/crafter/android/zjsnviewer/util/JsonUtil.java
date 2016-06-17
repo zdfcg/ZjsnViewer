@@ -94,7 +94,8 @@ public class JsonUtil {
         calendar.setTimeInMillis(time*1000);
 
         ret += calendar.get(Calendar.HOUR_OF_DAY) + Storage.str_hour[Storage.language];
-        ret += calendar.get(Calendar.MINUTE) + Storage.str_minute[Storage.language];
+        ret += calendar.get(Calendar.MINUTE) + Storage.str_minute_link2second[Storage.language];
+        ret += calendar.get(Calendar.SECOND) + Storage.str_second[Storage.language];
 
         return ret;
     }
