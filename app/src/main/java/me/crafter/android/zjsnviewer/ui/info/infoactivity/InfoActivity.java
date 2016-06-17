@@ -25,16 +25,19 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import me.crafter.android.zjsnviewer.util.DockInfo;
+import butterknife.OnClick;
 import me.crafter.android.zjsnviewer.R;
 import me.crafter.android.zjsnviewer.config.Storage;
 import me.crafter.android.zjsnviewer.service.task.UpdateTask;
-import me.crafter.android.zjsnviewer.ui.web.WebActivity;
-import me.crafter.android.zjsnviewer.ui.preference.main.ZjsnViewer;
+import me.crafter.android.zjsnviewer.ui.time.BuildTimeActivity;
 import me.crafter.android.zjsnviewer.ui.info.infofragment.BuildFragment;
 import me.crafter.android.zjsnviewer.ui.info.infofragment.MakeFragment;
 import me.crafter.android.zjsnviewer.ui.info.infofragment.RepairFragment;
 import me.crafter.android.zjsnviewer.ui.info.infofragment.TravelFragemt;
+import me.crafter.android.zjsnviewer.ui.preference.main.ZjsnViewer;
+import me.crafter.android.zjsnviewer.ui.time.MakeTimeActivity;
+import me.crafter.android.zjsnviewer.ui.web.WebActivity;
+import me.crafter.android.zjsnviewer.util.DockInfo;
 
 public class InfoActivity extends FragmentActivity {
 
@@ -69,15 +72,37 @@ public class InfoActivity extends FragmentActivity {
     TextView tv_drawer_level;
     @BindView(R.id.tv_build_time)
     TextView tv_build_time;
-    @BindView(R.id.tv_setting)
-    TextView tv_setting;
 
     @BindView(R.id.sw_title_on)
     Switch sw_title_on;
     @BindView(R.id.sw_title_auto_run)
     Switch sw_title_auto_run;
-    @BindView(R.id.tv_web)
-    TextView tv_web;
+
+    @OnClick(R.id.tv_web)
+    void gotoWeb(View view){
+
+        Intent intent = new Intent(InfoActivity.this, WebActivity.class);
+        startActivity(intent);
+    }
+    @OnClick(R.id.tv_goto_build_time)
+    void gotBuildTime(View view){
+
+        Intent intent = new Intent(InfoActivity.this, BuildTimeActivity.class);
+        startActivity(intent);
+    }
+    @OnClick(R.id.tv_goto_make_time)
+    void gotoMakeTime(View view){
+
+        Intent intent = new Intent(InfoActivity.this, MakeTimeActivity.class);
+        startActivity(intent);
+    }
+    @OnClick(R.id.tv_setting)
+    void gotoSetting(View view){
+
+        Intent intent = new Intent(context, ZjsnViewer.class);
+        startActivity(intent);
+    }
+
     private Context context;
 
     private ArrayList<TextView> tabs;
@@ -131,7 +156,7 @@ public class InfoActivity extends FragmentActivity {
 
     private void initView(){
 
-//        refreshView();
+        refreshView();
         initFragment();
     }
 
@@ -150,6 +175,7 @@ public class InfoActivity extends FragmentActivity {
 
                     DockInfo.updateInterval = 0;
                     final ProgressDialog progressDialog = ProgressDialog.show(context,"",getString(R.string.loading));
+                    progressDialog.setCancelable(true);
                     UpdateTask task = new UpdateTask(context);
                     task.setUpdateTaskStateChange(new UpdateTask.onUpdateTaskStateChange() {
 
@@ -208,15 +234,6 @@ public class InfoActivity extends FragmentActivity {
             }
         };
 
-        tv_setting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(context, ZjsnViewer.class);
-                startActivity(intent);
-            }
-        });
-
         sw_title_on.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -238,17 +255,6 @@ public class InfoActivity extends FragmentActivity {
 
                     sw_title_auto_run.setChecked(!isChecked);
                 }
-            }
-        });
-
-        tv_web.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(InfoActivity.this, WebActivity.class);
-                intent.putExtra("URL","http://js.ntwikis.com/");
-                intent.putExtra("JS","http://js.ntwikis.com/jsp/apps/cancollezh/charactors/buildtime.jsp");
-                startActivity(intent);
             }
         });
     }
