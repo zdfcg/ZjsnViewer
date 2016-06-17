@@ -157,6 +157,14 @@
         <activity android:name=".ui.web.WebActivity">
 
         </activity>
+
+        <activity android:name=".ui.time.BuildTimeActivity">
+
+        </activity>
+
+        <activity android:name=".ui.time.MakeTimeActivity">
+
+        </activity>
     </application>
 
 </manifest>

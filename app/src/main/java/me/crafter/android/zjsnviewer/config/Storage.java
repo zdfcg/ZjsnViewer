@@ -27,6 +27,8 @@ public class Storage {
     public static String[] str_idle = {"空闲中","空闲中","閒置中","Idle","未使用","-","闲着呢"};
     public static String[] str_hour = {"小时","时","小時","hr","时",":","时"};
     public static String[] str_minute = {"分钟","分","分鐘","min.","分","","分"};
+    public static String[] str_minute_link2second = {"分钟","分","分鐘","min.","分",":","分"};
+    public static String[] str_second = {"秒钟","秒","秒鐘","sec.","秒","","秒"};
     public static String[] str_travel = {"远征中 - ","远征中 - ","遠征中 - ","Exp.ing - ","遠征中 - ","","不在家"};
     public static String[] str_repair = {"修理中 - ","修理中 - ","修理中 - ","Reparing - ","入渠中 - ","","大破中"};
     public static String[] str_build = {"建造中 - ","建造中 - ","建造中 - ","Cons.ing - ","建造中 - ","","换装中"};
