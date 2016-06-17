@@ -288,9 +288,8 @@
                     android:padding="15dp"
                     android:gravity="center|start"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/unavailable"
-                    android:textColor="@color/font_black"
-                    android:visibility="gone"/>
+                    android:text="@string/web_site"
+                    android:textColor="@color/font_black"/>
 
             </LinearLayout>
 

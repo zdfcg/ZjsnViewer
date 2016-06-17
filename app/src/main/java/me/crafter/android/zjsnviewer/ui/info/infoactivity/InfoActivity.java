@@ -131,7 +131,7 @@ public class InfoActivity extends FragmentActivity {
 
     private void initView(){
 
-        refreshView();
+//        refreshView();
         initFragment();
     }
 
@@ -319,17 +319,6 @@ public class InfoActivity extends FragmentActivity {
         }
     }
 
-    private void refreshView(){
-
-        tv_name.setText(Storage.str_tiduName);
-        tv_drawer_name.setText(Storage.str_tiduName);
-        tv_level.setText("Level: " + DockInfo.level + " (" + DockInfo.exp + "/" + DockInfo.nextExp + ")");
-        tv_drawer_level.setText("Level: " + DockInfo.level + " (" + DockInfo.exp + "/" + DockInfo.nextExp + ")");
-        if (DockInfo.level.equals("150")){
-            tv_level.setText(R.string.max);
-            tv_drawer_level.setText(R.string.max);
-        }
-    }
 
     private void refreshAllView(){
 
@@ -339,5 +328,23 @@ public class InfoActivity extends FragmentActivity {
         repairFragment.refreshView();
         makeFragment.refreshView();
         travelFragemt.refreshView();
+    }
+
+    private void refreshView(){
+
+        try {
+
+            tv_name.setText(Storage.str_tiduName);
+            tv_drawer_name.setText(Storage.str_tiduName);
+            tv_level.setText("Level: " + DockInfo.level + " (" + DockInfo.exp + "/" + DockInfo.nextExp + ")");
+            tv_drawer_level.setText("Level: " + DockInfo.level + " (" + DockInfo.exp + "/" + DockInfo.nextExp + ")");
+            if (DockInfo.level.equals("150")){
+                tv_level.setText(R.string.max);
+                tv_drawer_level.setText(R.string.max);
+            }
+        }catch (Exception e){
+
+            e.printStackTrace();
+        }
     }
 }
