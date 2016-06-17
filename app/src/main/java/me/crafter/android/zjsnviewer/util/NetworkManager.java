@@ -152,6 +152,7 @@ public class NetworkManager {
      */
     //// TODO: 6/8/2016    This should be out of NetworkManager, be apart. New Class Needed.
     //// TODO: 6/12/2016 这个类中的context是否会产生内存泄漏？ 找时间检查下，看看使用的是Application Context还是 act的context。
+    /** master不提供该功能**/
     public static boolean autoExplore(Context context, String server ,String loginCookie  ,int exploreId, int fleetId) {
         Log.d("NetworkManager", "autoExplore");
         Log.d("NetworkManager", "check time");
@@ -371,7 +372,6 @@ public class NetworkManager {
             DockInfo.exp = data.getJSONObject("userVo").getString("exp");
             DockInfo.nextExp = data.getJSONObject("userVo").getString("nextExp");
             DockInfo.level = data.getJSONObject("userVo").getString("level");
-
             JSONObject pveExploreVo = data.getJSONObject("pveExploreVo");
             JSONArray levels = pveExploreVo.getJSONArray("levels");
             boolean shouldExplore = false;
@@ -380,11 +380,12 @@ public class NetworkManager {
                 int endTime = level.getInt("endTime");
                 DockInfo.dockTravelTime[level.getInt("fleetId")-1] = endTime;
                 if(endTime < currentUnix()) {
-                    autoExplore(context, server, loginCookie, level.getInt("exploreId"), level.getInt("fleetId"));
+//master不提供该功能
+//                    autoExplore(context, server, loginCookie, level.getInt("exploreId"), level.getInt("fleetId"));
                     shouldExplore = true;
                 }
             }
-//            TODO 如果远征了立刻刷新一遍状态，但是太暴力，需要有更好的方法
+////            TODO 如果远征了立刻刷新一遍状态，但是太暴力，需要有更好的方法
             if (shouldExplore) initGame(context, server, loginCookie);
 
             JSONArray dockVo = data.getJSONArray("dockVo");

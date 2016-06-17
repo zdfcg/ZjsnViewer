@@ -37,15 +37,21 @@ public class BuildFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        refreshView();
+//        refreshView();
     }
 
     public void refreshView(){
 
-        String[] info = DockInfo.getBuildBoard();
-        textView1.setText(info[0]);
-        textView2.setText(info[1]);
-        textView3.setText(info[2]);
-        textView4.setText(info[3]);
+        try {
+
+            String[] info = DockInfo.getBuildBoard();
+            textView1.setText(info[0]);
+            textView2.setText(info[1]);
+            textView3.setText(info[2]);
+            textView4.setText(info[3]);
+        }catch (Exception e){
+
+            e.printStackTrace();
+        }
     }
 }
