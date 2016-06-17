@@ -7,7 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import me.crafter.android.zjsnviewer.R;
-import me.crafter.android.zjsnviewer.zjsApplication;
+import me.crafter.android.zjsnviewer.ZjsApplication;
 
 /**
  * @author traburiss
@@ -21,14 +21,14 @@ public class BaseFragmentActivity extends FragmentActivity {
     private final String TAG = "BaseFragmentActivity";
 
     protected Context context;
-    protected zjsApplication application;
+    protected ZjsApplication application;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        application = zjsApplication.getInstance();
+        application = ZjsApplication.getInstance();
         context = this;
     }
 
