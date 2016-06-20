@@ -16,7 +16,8 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent arg1) {
 //        context = ZjsnApplication.getAppContext();
-        startWakefulService(context, new Intent(context, ProceedService.class));
+        Intent intent = new Intent(context, ProceedService.class);
+        startWakefulService(context, intent);
     }
 
 }

@@ -1,18 +1,22 @@
 package me.crafter.android.zjsnviewer.ui.info.infoactivity;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
@@ -43,6 +47,8 @@ import me.crafter.android.zjsnviewer.ui.web.WebActivity;
 import me.crafter.android.zjsnviewer.util.DockInfo;
 
 public class InfoActivity extends FragmentActivity {
+
+    private int WRITE_EXTERNAL_STORAGE_REQUEST_CODE;
 
     @BindView(R.id.dl_drawer)
     DrawerLayout dl_drawer;
@@ -122,6 +128,15 @@ public class InfoActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            //申请WRITE_EXTERNAL_STORAGE权限
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
+        }
+
         setContentView(R.layout.activity_info);
         ButterKnife.bind(this);
 

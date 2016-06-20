@@ -1,6 +1,9 @@
 package me.crafter.android.zjsnviewer.util;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,6 +23,7 @@ import java.util.zip.InflaterInputStream;
 
 import me.crafter.android.zjsnviewer.config.Storage;
 import me.crafter.android.zjsnviewer.ZjsnApplication;
+import me.crafter.android.zjsnviewer.service.service.ProceedService;
 import me.crafter.android.zjsnviewer.ui.info.infoactivity.InfoActivity;
 
 public class NetworkManager {
@@ -294,7 +298,12 @@ public class NetworkManager {
         initServer();
         Log.i("NetworkManager", "updateDockInfo()");
         Log.i("NetworkManager", "Unix: " + getCurrentUnixTime());
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ZjsnApplication.getAppContext());
+        if (!isOnline()){
+            ProceedService.appendLog("no network connection");
+            return false;
+        }
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
+                ZjsnApplication.getAppContext());
 
         Boolean on = prefs.getBoolean("on", false);
         if (!on){
@@ -308,6 +317,7 @@ public class NetworkManager {
             return false;
         }
         boolean success;
+        ProceedService.appendLog("update start");
         // STEP 1 PASSPORT LOGIN
         success = getAccountCookie();
         if (!success) return false;
@@ -319,6 +329,7 @@ public class NetworkManager {
         if (!success) return false;
         autoExplore();
         InfoActivity.refreshInfoActivity();
+        ProceedService.appendLog("update success");
         return true;
     }
     public static boolean getAccountCookie(){
@@ -332,6 +343,7 @@ public class NetworkManager {
         OperateSession workingSession = new OperateSession(url);
         String response = workingSession.open();
         loginCookie = workingSession.getCookie();
+        if (loginCookie.equals("")) return false;
         try {
             JSONObject obj = new JSONObject(response);
             uid = obj.getInt("userId");
@@ -357,8 +369,14 @@ public class NetworkManager {
         boolean success = DockInfo.parseInitGame(response);
         if (!success) return false;
         Log.i("NetworkManager", "initGame successful");
-        DockInfo.updateInterval += 75;
-        DockInfo.updateInterval = Math.min(DockInfo.updateInterval, 1210);
+        DockInfo.updateInterval = 300;
         return true;
+    }
+    public static boolean isOnline() {
+        Context context = ZjsnApplication.getAppContext();
+        ConnectivityManager connMgr = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
     }
 }
