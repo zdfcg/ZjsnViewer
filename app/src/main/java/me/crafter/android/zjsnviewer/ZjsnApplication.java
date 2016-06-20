@@ -1,9 +1,15 @@
 package me.crafter.android.zjsnviewer;
 
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 
+import java.util.Calendar;
+
+import me.crafter.android.zjsnviewer.service.receiver.AlarmReceiver;
 import me.crafter.android.zjsnviewer.service.service.TimerService;
 
 /**
@@ -23,6 +29,17 @@ public class ZjsnApplication extends Application{
         super.onCreate();
         instance = this;
         context = getApplicationContext();
+
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.MINUTE, 10);
+//        calendar.add(Calendar.SECOND, 1);
+        Intent i = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(), 1000*60*10,
+                pendingIntent);
+
         startService(new Intent(this, TimerService.class));
     }
 

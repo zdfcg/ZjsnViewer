@@ -72,8 +72,17 @@
 
         </service>
 
+        <service android:name=".service.service.ProceedService"/>
+
         <receiver
             android:name=".service.receiver.ScreenReceiver"
+            android:enabled="true"
+            android:exported="true">
+
+        </receiver>
+
+        <receiver
+            android:name=".service.receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="true">
 
