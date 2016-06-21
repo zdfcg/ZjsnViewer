@@ -26,6 +26,7 @@ import me.crafter.android.zjsnviewer.ZjsnApplication;
 import me.crafter.android.zjsnviewer.config.Storage;
 import me.crafter.android.zjsnviewer.service.receiver.AlarmReceiver;
 import me.crafter.android.zjsnviewer.util.DockInfo;
+import me.crafter.android.zjsnviewer.util.NetworkManager;
 
 /**
  * Created by paleneutron on 6/20/2016.
@@ -65,14 +66,16 @@ public class ProceedService extends IntentService{
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         Storage.language = Integer.parseInt(prefs.getString("language", "0"));
+        boolean success = false;
         if (prefs.getBoolean("auto_run", true)) {
-            DockInfo.requestUpdate();
+//            success = DockInfo.requestUpdate();
+            success = NetworkManager.updateDockInfo();
         }
-        Log.i(TAG, "Stop");
+        Log.i(TAG, "success stop:"+String.valueOf(success));
 
         appendLog("ProceedService finished");
 
-        AlarmReceiver.completeWakefulIntent(intent);
+//        AlarmReceiver.completeWakefulIntent(intent);
     }
 
     public static void appendLog(String text)

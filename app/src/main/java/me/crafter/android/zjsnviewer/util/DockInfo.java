@@ -9,6 +9,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import me.crafter.android.zjsnviewer.ZjsnApplication;
 import me.crafter.android.zjsnviewer.config.Storage;
 
@@ -135,7 +140,19 @@ public class DockInfo {
 //        Log.i("DockInfo", "getStatusInt() returned " + debug);
         return ret;
     }
-
+//    public static boolean setNextTiming(){
+//        List<int[]> timeList = new ArrayList<int[]>();
+//        timeList.addAll(Arrays.asList(dockBuildTime));
+//        timeList.addAll(Arrays.asList(dockMakeTime));
+//        timeList.addAll(Arrays.asList(dockTravelTime));
+//        timeList.addAll(Arrays.asList(dockRepairTime));
+//
+//        int min = Integer.MIN_VALUE;
+//        for (int i = 0; i <timeList.size(); i++) {
+//            if (timeList.get(i) < min )
+//        }
+//        return true;
+//    }
     public static boolean shouldNotify(){
         // First check no disturb
         Log.d("DockInfo", "check notify");

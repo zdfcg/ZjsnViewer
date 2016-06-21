@@ -12,6 +12,7 @@ import java.util.Calendar;
 import me.crafter.android.zjsnviewer.service.receiver.AlarmReceiver;
 import me.crafter.android.zjsnviewer.service.service.ProceedService;
 import me.crafter.android.zjsnviewer.service.service.TimerService;
+import me.crafter.android.zjsnviewer.util.WakeLocker;
 
 /**
  * @author traburiss
@@ -33,6 +34,7 @@ public class ZjsnApplication extends Application{
 
         startService(new Intent(this, ProceedService.class));
         startService(new Intent(this, TimerService.class));
+        WakeLocker.acquire(context);
     }
     public static ZjsnApplication getInstance() {
         return instance;

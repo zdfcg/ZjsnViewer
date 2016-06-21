@@ -11,13 +11,22 @@ import me.crafter.android.zjsnviewer.service.service.ProceedService;
 /**
  * Created by paleneutron on 6/20/2016.
  */
-public class AlarmReceiver extends WakefulBroadcastReceiver {
+//public class AlarmReceiver extends WakefulBroadcastReceiver {
+//
+//    @Override
+//    public void onReceive(Context context, Intent arg1) {
+////        context = ZjsnApplication.getAppContext();
+//        Intent intent = new Intent(context, ProceedService.class);
+//        startWakefulService(context, intent);
+//    }
+//
+//}
 
+public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent arg1) {
 //        context = ZjsnApplication.getAppContext();
         Intent intent = new Intent(context, ProceedService.class);
-        startWakefulService(context, intent);
+        context.startService(intent);
     }
-
 }

@@ -297,6 +297,7 @@ public class NetworkManager {
         Log.i("NetworkManager", "url_login:" + url_login);
     }
     public static boolean updateDockInfo(){
+        Context context = ZjsnApplication.getAppContext();
         initServer();
         Log.i("NetworkManager", "updateDockInfo()");
         Log.i("NetworkManager", "Unix: " + getCurrentUnixTime());
@@ -304,8 +305,8 @@ public class NetworkManager {
             ProceedService.appendLog("no network connection");
             return false;
         }
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
-                ZjsnApplication.getAppContext());
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context
+                );
 
         Boolean on = prefs.getBoolean("on", false);
         if (!on){
