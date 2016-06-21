@@ -1,11 +1,16 @@
 package me.crafter.android.zjsnviewer.service.service;
 
 import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -17,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
+import me.crafter.android.zjsnviewer.ZjsnApplication;
 import me.crafter.android.zjsnviewer.config.Storage;
 import me.crafter.android.zjsnviewer.service.receiver.AlarmReceiver;
 import me.crafter.android.zjsnviewer.util.DockInfo;
@@ -29,10 +35,27 @@ public class ProceedService extends IntentService{
     public ProceedService(){
         super("ProceedService");
     }
+
+    static void scheduleAlarms(int period) {
+        Context ctxt = ZjsnApplication.getAppContext();
+        AlarmManager mgr = (AlarmManager) ctxt.getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(ctxt, AlarmReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(ctxt, 0, i, 0);
+        mgr.cancel(pi);
+        if (Build.VERSION.SDK_INT >= 19) {
+            mgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    SystemClock.elapsedRealtime() + period, pi);
+        } else {
+            mgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    SystemClock.elapsedRealtime() + period, pi);
+        }
+    }
+
     @Override
     protected void onHandleIntent(Intent intent){
         appendLog("ProceedService start");
         Log.i(TAG, "Start");
+        scheduleAlarms(2*60*1000);
         try {
             Thread.sleep(1000*10);
         } catch (InterruptedException e) {

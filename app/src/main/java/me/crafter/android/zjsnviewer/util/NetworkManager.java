@@ -172,6 +172,7 @@ public class NetworkManager {
                 urlString = getFinalUrl(urlString);
                 URL url = new URL(urlString);
                 Log.i("Session", url.toString());
+                ProceedService.appendLog("Session"+url.toString());
                 connection = url.openConnection();
                 connection.setConnectTimeout(15000);
                 connection.setReadTimeout(15000);
@@ -187,6 +188,7 @@ public class NetworkManager {
                 in.close();
                 if (response.contains("\"eid\"")){
                     Log.i("Session", "get eid");
+                    ProceedService.appendLog("Session"+"get eid");
                 }
 
             }catch (Exception ex) {
