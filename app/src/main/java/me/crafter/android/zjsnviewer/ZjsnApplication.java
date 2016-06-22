@@ -32,9 +32,9 @@ public class ZjsnApplication extends Application{
         instance = this;
         context = getApplicationContext();
 
-        startService(new Intent(this, ProceedService.class));
+//        startService(new Intent(this, ProceedService.class));
         startService(new Intent(this, TimerService.class));
-        WakeLocker.acquire(context);
+        AlarmReceiver.scheduleAlarms(1000*60);
     }
     public static ZjsnApplication getInstance() {
         return instance;

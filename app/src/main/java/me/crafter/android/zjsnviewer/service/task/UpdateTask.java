@@ -34,7 +34,7 @@ public class UpdateTask extends AsyncTask<Void,Void,Void> {
         Widget_Repair.updateWidget(context);
         Widget_Build.updateWidget(context);
         Widget_Make.updateWidget(context);
-        context.startService(new Intent(context, TimerService.class));
+//        context.startService(new Intent(context, TimerService.class));
         return null;
     }
     @Override

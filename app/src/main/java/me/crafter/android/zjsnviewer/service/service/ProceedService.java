@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
@@ -25,8 +26,14 @@ import java.text.SimpleDateFormat;
 import me.crafter.android.zjsnviewer.ZjsnApplication;
 import me.crafter.android.zjsnviewer.config.Storage;
 import me.crafter.android.zjsnviewer.service.receiver.AlarmReceiver;
+import me.crafter.android.zjsnviewer.ui.widget.Widget_Build;
+import me.crafter.android.zjsnviewer.ui.widget.Widget_Main;
+import me.crafter.android.zjsnviewer.ui.widget.Widget_Make;
+import me.crafter.android.zjsnviewer.ui.widget.Widget_Repair;
+import me.crafter.android.zjsnviewer.ui.widget.Widget_Travel;
 import me.crafter.android.zjsnviewer.util.DockInfo;
 import me.crafter.android.zjsnviewer.util.NetworkManager;
+import me.crafter.android.zjsnviewer.util.NotificationSender;
 
 /**
  * Created by paleneutron on 6/20/2016.
@@ -37,45 +44,55 @@ public class ProceedService extends IntentService{
         super("ProceedService");
     }
 
-    static void scheduleAlarms(int period) {
-        Context ctxt = ZjsnApplication.getAppContext();
-        AlarmManager mgr = (AlarmManager) ctxt.getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(ctxt, AlarmReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(ctxt, 0, i, 0);
-        mgr.cancel(pi);
-        if (Build.VERSION.SDK_INT >= 19) {
-            mgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    SystemClock.elapsedRealtime() + period, pi);
-        } else {
-            mgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    SystemClock.elapsedRealtime() + period, pi);
-        }
-    }
-
     @Override
     protected void onHandleIntent(Intent intent){
-        appendLog("ProceedService start");
-        Log.i(TAG, "Start");
-        scheduleAlarms(2*60*1000);
-        try {
-            Thread.sleep(1000*10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Context context = getApplicationContext();
+        appendLog(TAG+" start ProceedService");
+        Context context = this;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         Storage.language = Integer.parseInt(prefs.getString("language", "0"));
-        boolean success = false;
+        boolean upadated = false;
         if (prefs.getBoolean("auto_run", true)) {
-//            success = DockInfo.requestUpdate();
-            success = NetworkManager.updateDockInfo();
+            upadated = DockInfo.requestUpdate();
         }
-        Log.i(TAG, "success stop:"+String.valueOf(success));
+        appendLog(TAG+" "+String.valueOf(upadated));
+        //notification checker
+        if (DockInfo.shouldNotify()){
 
-        appendLog("ProceedService finished");
+            String msj_name = prefs.getString("notification_msj_name","");
+            if (msj_name.isEmpty()){
 
-//        AlarmReceiver.completeWakefulIntent(intent);
+                NotificationSender.notify(context, Storage.str_reportTitle[Storage.language], DockInfo.getStatusReportAllFull());
+            }else {
+
+                NotificationSender.notify(context, msj_name + Storage.str_msjreportTitle[Storage.language], DockInfo.getStatusReportAllFull());
+            }
+        }
+        //check if screen is on
+        //if screen not on, widget should not update
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        boolean screenon;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH){
+            screenon = pm.isInteractive();
+        } else {
+            screenon = pm.isScreenOn();
+        }
+        if (!screenon){
+            //Log.i("TimerService", "run() - Screen is off, ignores update.");
+        } else {
+            int currentUnix = DockInfo.currentUnix();
+            if (currentUnix - TimerService.lastWidgetUpdate >= Integer.parseInt(prefs.getString("refresh", "60"))) {
+
+                TimerService.lastWidgetUpdate = currentUnix;
+                Widget_Main.updateWidget(context);
+                Widget_Travel.updateWidget(context);
+                Widget_Repair.updateWidget(context);
+                Widget_Build.updateWidget(context);
+                Widget_Make.updateWidget(context);
+            } else {
+                //not time yet, ignore widget update
+            }
+        }
     }
 
     public static void appendLog(String text)
