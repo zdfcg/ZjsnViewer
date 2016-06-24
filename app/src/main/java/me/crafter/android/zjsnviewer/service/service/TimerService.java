@@ -22,6 +22,7 @@ import android.util.Log;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import me.crafter.android.zjsnviewer.ZjsnApplication;
 import me.crafter.android.zjsnviewer.util.DockInfo;
 import me.crafter.android.zjsnviewer.util.NotificationSender;
 import me.crafter.android.zjsnviewer.R;
@@ -158,18 +159,18 @@ public class TimerService extends Service {
             setForeGround(instance);
             refresh_notify_interval();
         }
+    }
 
-        public void refresh_notify_interval(){
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(instance);
-            if (NOTIFY_INTERVAL != (Long.valueOf(prefs.getString("refresh", "60"))) * 1000) {
+    public void refresh_notify_interval(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ZjsnApplication.getAppContext());
+        if (NOTIFY_INTERVAL != (Long.valueOf(prefs.getString("refresh", "60"))) * 1000) {
 
-                NOTIFY_INTERVAL = (Long.valueOf(prefs.getString("refresh", "60"))) * 1000;
-                mTimer.cancel();
-                mTimer = new Timer();
-                mTimer.scheduleAtFixedRate(new TimeDisplayTimerTask(), NOTIFY_INTERVAL, NOTIFY_INTERVAL);
-            }
-            Log.i("TimerService", "run() - TimerService Receive Call\nNOTIFY_INTERVAL:" + NOTIFY_INTERVAL + "\nrefresh:" + prefs.getString("refresh", "60"));
+            NOTIFY_INTERVAL = (Long.valueOf(prefs.getString("refresh", "60"))) * 1000;
+            mTimer.cancel();
+            mTimer = new Timer();
+            mTimer.scheduleAtFixedRate(new TimeDisplayTimerTask(), NOTIFY_INTERVAL, NOTIFY_INTERVAL);
         }
+        Log.i("TimerService", "NOTIFY_INTERVAL:" + NOTIFY_INTERVAL + " refresh:" + prefs.getString("refresh", "60"));
     }
 
     private class Proceed extends AsyncTask {

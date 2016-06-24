@@ -24,25 +24,9 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         ProceedService.appendLog("alarm start");
         Log.i("AlarmReceiver", "alarm start");
         Intent intent = new Intent(context, ProceedService.class);
-        scheduleAlarms(1000*60*10);
+//        scheduleAlarms(1000*60*10);
         startWakefulService(context, intent);
     }
-
-    public static void scheduleAlarms(int period) {
-        Context ctxt = ZjsnApplication.getAppContext();
-        AlarmManager mgr = (AlarmManager) ctxt.getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(ctxt, AlarmReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(ctxt, 0, i, 0);
-        mgr.cancel(pi);
-        if (Build.VERSION.SDK_INT >= 19) {
-            mgr.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    SystemClock.elapsedRealtime() + period, pi);
-        } else {
-            mgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    SystemClock.elapsedRealtime() + period, pi);
-        }
-    }
-
 }
 
 //public class AlarmReceiver extends BroadcastReceiver {
