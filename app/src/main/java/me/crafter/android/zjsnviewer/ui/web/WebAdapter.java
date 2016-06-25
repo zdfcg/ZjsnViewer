@@ -20,7 +20,6 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.crafter.android.zjsnviewer.R;
-import me.crafter.android.zjsnviewer.config.WebSite;
 
 /**
  * @author traburiss
@@ -47,17 +46,17 @@ public class WebAdapter extends Adapter<WebAdapter.WebViewHolder>{
 
     private String getName(int position){
 
-        return list.get(position).get(WebSite.WEB_NAME);
+        return list.get(position).get("WEB_NAME");
     }
 
     private String getURL(int position){
 
-        return list.get(position).get(WebSite.WEB_URL);
+        return list.get(position).get("WEB_URL");
     }
 
     private String getIcon(int position){
 
-        return list.get(position).get(WebSite.WEB_ICON);
+        return list.get(position).get("WEB_ICON");
     }
 
     @Override
