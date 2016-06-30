@@ -84,7 +84,7 @@ public class TimeAdapter extends RecyclerView.Adapter<TimeAdapter.TimeViewHolder
             RxTextView.text(holder.tv_time).call(item.get(TIME));
         }else {
 
-            float font_size = context.getResources().getDimension(R.dimen.text_size_22);
+            float font_size = context.getResources().getDimension(R.dimen.text_size_18);
             int padding_size = context.getResources().getDimensionPixelSize(R.dimen.dp_size_15);
             int padding_left_size = context.getResources().getDimensionPixelSize(R.dimen.dp_size_25);
 
