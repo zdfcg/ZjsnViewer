@@ -37,45 +37,29 @@ import me.crafter.android.zjsnviewer.ui.time.BuildTimeActivity;
 import me.crafter.android.zjsnviewer.ui.time.MakeTimeActivity;
 import me.crafter.android.zjsnviewer.ui.web.WebActivity;
 import me.crafter.android.zjsnviewer.util.DockInfo;
+import me.crafter.android.zjsnviewer.util.SharePreferenceUtil;
 
 public class InfoActivity extends BaseFragmentActivity {
 
-    @BindView(R.id.dl_drawer)
-    DrawerLayout dl_drawer;
+    @BindView(R.id.dl_drawer) DrawerLayout dl_drawer;
 
-//    @BindView(R.id.toolbar)
-//    Toolbar bar;
+    @BindView(R.id.tv_name) TextView tv_name;
+    @BindView(R.id.tv_level) TextView tv_level;
 
-    @BindView(R.id.tv_name)
-    TextView tv_name;
-    @BindView(R.id.tv_level)
-    TextView tv_level;
+    @BindView(R.id.tv_travel) TextView tv_travel;
+    @BindView(R.id.tv_repair) TextView tv_repair;
+    @BindView(R.id.tv_build) TextView tv_build;
+    @BindView(R.id.tv_make) TextView tv_make;
+    @BindView(R.id.vp_page) ViewPager vp_page;
 
-    @BindView(R.id.tv_travel)
-    TextView tv_travel;
-    @BindView(R.id.tv_repair)
-    TextView tv_repair;
-    @BindView(R.id.tv_build)
-    TextView tv_build;
-    @BindView(R.id.tv_make)
-    TextView tv_make;
-    @BindView(R.id.vp_page)
-    ViewPager vp_page;
+    @BindView(R.id.ib_icon) ImageButton ib_icon;
 
-    @BindView(R.id.ib_icon)
-    ImageButton ib_icon;
+    @BindView(R.id.tv_drawer_name) TextView tv_drawer_name;
+    @BindView(R.id.tv_drawer_level) TextView tv_drawer_level;
+    @BindView(R.id.tv_build_time) TextView tv_build_time;
 
-    @BindView(R.id.tv_drawer_name)
-    TextView tv_drawer_name;
-    @BindView(R.id.tv_drawer_level)
-    TextView tv_drawer_level;
-    @BindView(R.id.tv_build_time)
-    TextView tv_build_time;
-
-    @BindView(R.id.sw_title_on)
-    Switch sw_title_on;
-    @BindView(R.id.sw_title_auto_run)
-    Switch sw_title_auto_run;
+    @BindView(R.id.sw_title_on) Switch sw_title_on;
+    @BindView(R.id.sw_title_auto_run) Switch sw_title_auto_run;
 
     @BindView(R.id.tv_goto_build_time) TextView tv_goto_build_time;
     @BindView(R.id.tv_goto_make_time) TextView tv_goto_make_time;
@@ -92,7 +76,7 @@ public class InfoActivity extends BaseFragmentActivity {
 
     private Handler handler;
     private Runnable runnable;
-    private int RUN_TIME = 60*1000;
+    private long run_time = 60*1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,9 +92,8 @@ public class InfoActivity extends BaseFragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Boolean on = preferences.getBoolean("on", true);
-        Boolean auto = preferences.getBoolean("auto_run", true);
+        Boolean on = SharePreferenceUtil.getInstance().getValue("on", true);
+        Boolean auto = SharePreferenceUtil.getInstance().getValue("auto_run", true);
         sw_title_on.setChecked(on);
         sw_title_auto_run.setChecked(auto);
 
@@ -126,10 +109,9 @@ public class InfoActivity extends BaseFragmentActivity {
     private void initData(){
 
         context = this;
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String username = prefs.getString("username", "none");
-        String password = prefs.getString("password", "none");
-        if (username.contains("none") &&  password.contains("none")) Toast.makeText(context, R.string.username_hint, Toast.LENGTH_SHORT).show();
+        String username = SharePreferenceUtil.getInstance().getValue("username", "none");
+        String password = SharePreferenceUtil.getInstance().getValue("password", "none");
+        if (username.equalsIgnoreCase("none") &&  password.equalsIgnoreCase("none")) Toast.makeText(context, R.string.username_hint, Toast.LENGTH_SHORT).show();
     }
 
     private void initView(){
@@ -171,7 +153,8 @@ public class InfoActivity extends BaseFragmentActivity {
         runnable = () -> {
 
             refreshAllView();
-            handler.postDelayed(runnable,RUN_TIME);
+            run_time = Long.valueOf(SharePreferenceUtil.getInstance().getValue("refresh", "60"))*1000;
+            handler.postDelayed(runnable,run_time);
         };
 
         sw_title_on.setOnCheckedChangeListener((buttonView, isChecked) -> {
