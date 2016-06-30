@@ -36,7 +36,7 @@ public class TimeAdapter extends RecyclerView.Adapter<TimeAdapter.TimeViewHolder
     private final String TIME = "time";
     private final String NAME = "name";
 
-    private int position = -1;
+    private int position = 0;
 
     public TimeAdapter(Context context, ArrayList<Long> parent, ArrayList<ArrayList<String>> child){
 
@@ -50,11 +50,17 @@ public class TimeAdapter extends RecyclerView.Adapter<TimeAdapter.TimeViewHolder
 
         list = new ArrayList<>();
 
-        getTime().subscribe(stringStringHashMap -> {
+        Observable.from(parent)
+                .map(JsonUtil::long2hms)
+                .map(s -> getHahMap(TIME,s))
+                .subscribe(stringStringHashMap -> {
 
-            list.add(stringStringHashMap);
-            getName().subscribe(stringStringHashMap1 -> list.add(stringStringHashMap1));
-        });
+                    list.add(stringStringHashMap);
+                    Observable.from(child.get(position))
+                            .map(s -> getHahMap(NAME, s))
+                            .subscribe(stringStringHashMap1 -> list.add(stringStringHashMap1));
+                    position++;
+                });
     }
 
     @Override
@@ -69,23 +75,22 @@ public class TimeAdapter extends RecyclerView.Adapter<TimeAdapter.TimeViewHolder
         HashMap<String, String> item = list.get(position);
         if (item.containsKey(TIME)){
 
-            holder.tv_time.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources().getDimension(R.dimen.text_size_22));
+            float font_size = context.getResources().getDimension(R.dimen.text_size_22);
+            int padding_size = context.getResources().getDimensionPixelSize(R.dimen.dp_size_15);
+
+            holder.tv_time.setTextSize(TypedValue.COMPLEX_UNIT_PX, font_size);
             holder.tv_time.setBackgroundResource(R.color.background_white);
-            holder.tv_time.setPadding(
-                    context.getResources().getDimensionPixelSize(R.dimen.dp_size_15),
-                    context.getResources().getDimensionPixelSize(R.dimen.dp_size_15),
-                    context.getResources().getDimensionPixelSize(R.dimen.dp_size_15),
-                    context.getResources().getDimensionPixelSize(R.dimen.dp_size_15));
+            holder.tv_time.setPadding(padding_size, padding_size, padding_size, padding_size);
             RxTextView.text(holder.tv_time).call(item.get(TIME));
         }else {
 
-            holder.tv_time.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources().getDimension(R.dimen.text_size_18));
+            float font_size = context.getResources().getDimension(R.dimen.text_size_22);
+            int padding_size = context.getResources().getDimensionPixelSize(R.dimen.dp_size_15);
+            int padding_left_size = context.getResources().getDimensionPixelSize(R.dimen.dp_size_25);
+
+            holder.tv_time.setTextSize(TypedValue.COMPLEX_UNIT_PX, font_size);
             holder.tv_time.setBackgroundResource(R.color.background_grey);
-            holder.tv_time.setPadding(
-                    context.getResources().getDimensionPixelSize(R.dimen.dp_size_25),
-                    context.getResources().getDimensionPixelSize(R.dimen.dp_size_15),
-                    context.getResources().getDimensionPixelSize(R.dimen.dp_size_15),
-                    context.getResources().getDimensionPixelSize(R.dimen.dp_size_15));
+            holder.tv_time.setPadding(padding_left_size, padding_size, padding_size, padding_size);
             RxTextView.text(holder.tv_time).call(item.get(NAME));
         }
     }
@@ -97,26 +102,16 @@ public class TimeAdapter extends RecyclerView.Adapter<TimeAdapter.TimeViewHolder
         return list.size();
     }
 
-    public class TimeViewHolder extends RecyclerView.ViewHolder{
+    public class TimeViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.tv_time) TextView tv_time;
+        @BindView(R.id.tv_time)
+        TextView tv_time;
 
         public TimeViewHolder(View itemView) {
 
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
-    }
-
-    private Observable<HashMap<String, String>> getTime(){
-
-        return Observable.from(parent).map(JsonUtil::long2hms).map(s -> getHahMap(TIME, s));
-    }
-
-    private Observable<HashMap<String, String>> getName(){
-
-        position ++;
-        return Observable.from(child.get(position)).map(s -> getHahMap(NAME, s));
     }
 
     private HashMap<String, String> getHahMap(String key, String value){

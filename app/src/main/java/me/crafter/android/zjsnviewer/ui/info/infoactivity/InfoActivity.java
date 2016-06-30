@@ -2,50 +2,49 @@ package me.crafter.android.zjsnviewer.ui.info.infoactivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jakewharton.rxbinding.support.v4.view.RxViewPager;
+import com.jakewharton.rxbinding.view.RxView;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import me.crafter.android.zjsnviewer.R;
 import me.crafter.android.zjsnviewer.config.Storage;
 import me.crafter.android.zjsnviewer.service.task.UpdateTask;
-import me.crafter.android.zjsnviewer.ui.time.BuildTimeActivity;
+import me.crafter.android.zjsnviewer.ui.BaseFragmentActivity;
 import me.crafter.android.zjsnviewer.ui.info.infofragment.BuildFragment;
 import me.crafter.android.zjsnviewer.ui.info.infofragment.MakeFragment;
 import me.crafter.android.zjsnviewer.ui.info.infofragment.RepairFragment;
-import me.crafter.android.zjsnviewer.ui.info.infofragment.TravelFragemt;
+import me.crafter.android.zjsnviewer.ui.info.infofragment.TravelFragment;
 import me.crafter.android.zjsnviewer.ui.preference.main.ZjsnViewer;
+import me.crafter.android.zjsnviewer.ui.time.BuildTimeActivity;
 import me.crafter.android.zjsnviewer.ui.time.MakeTimeActivity;
 import me.crafter.android.zjsnviewer.ui.web.WebActivity;
 import me.crafter.android.zjsnviewer.util.DockInfo;
 
-public class InfoActivity extends FragmentActivity {
+public class InfoActivity extends BaseFragmentActivity {
 
     @BindView(R.id.dl_drawer)
     DrawerLayout dl_drawer;
 
-    @BindView(R.id.toolbar)
-    Toolbar bar;
+//    @BindView(R.id.toolbar)
+//    Toolbar bar;
 
     @BindView(R.id.tv_name)
     TextView tv_name;
@@ -78,35 +77,15 @@ public class InfoActivity extends FragmentActivity {
     @BindView(R.id.sw_title_auto_run)
     Switch sw_title_auto_run;
 
-    @OnClick(R.id.tv_web)
-    void gotoWeb(View view){
-
-        Intent intent = new Intent(InfoActivity.this, WebActivity.class);
-        startActivity(intent);
-    }
-    @OnClick(R.id.tv_goto_build_time)
-    void gotBuildTime(View view){
-
-        Intent intent = new Intent(InfoActivity.this, BuildTimeActivity.class);
-        startActivity(intent);
-    }
-    @OnClick(R.id.tv_goto_make_time)
-    void gotoMakeTime(View view){
-
-        Intent intent = new Intent(InfoActivity.this, MakeTimeActivity.class);
-        startActivity(intent);
-    }
-    @OnClick(R.id.tv_setting)
-    void gotoSetting(View view){
-
-        Intent intent = new Intent(context, ZjsnViewer.class);
-        startActivity(intent);
-    }
+    @BindView(R.id.tv_goto_build_time) TextView tv_goto_build_time;
+    @BindView(R.id.tv_goto_make_time) TextView tv_goto_make_time;
+    @BindView(R.id.tv_web) TextView tv_web;
+    @BindView(R.id.tv_setting) TextView tv_setting;
 
     private Context context;
 
     private ArrayList<TextView> tabs;
-    private TravelFragemt travelFragemt;
+    private TravelFragment travelFragment;
     private BuildFragment buildFragment;
     private MakeFragment makeFragment;
     private RepairFragment repairFragment;
@@ -114,7 +93,6 @@ public class InfoActivity extends FragmentActivity {
     private Handler handler;
     private Runnable runnable;
     private int RUN_TIME = 60*1000;
-    private int FIRST_TIME = 2*1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,7 +114,7 @@ public class InfoActivity extends FragmentActivity {
         sw_title_on.setChecked(on);
         sw_title_auto_run.setChecked(auto);
 
-        handler.postDelayed(runnable,FIRST_TIME);
+        handler.postDelayed(runnable, 2 * 1000);
     }
 
     @Override
@@ -145,7 +123,7 @@ public class InfoActivity extends FragmentActivity {
         handler.removeCallbacks(runnable);
     }
 
-    public void initData(){
+    private void initData(){
 
         context = this;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -162,129 +140,77 @@ public class InfoActivity extends FragmentActivity {
 
     private void initEven(){
 
-        bar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
+        RxView.clicks(ib_icon).subscribe(aVoid -> {
+
+            DockInfo.updateInterval = 0;
+            final ProgressDialog progressDialog = ProgressDialog.show(context, "", getString(R.string.loading));
+            progressDialog.setCancelable(true);
+            UpdateTask task = new UpdateTask(context);
+            task.setUpdateTaskStateChange(()-> {
+
+                    progressDialog.dismiss();
+                    refreshAllView();
+                });
+            task.execute();
         });
 
-        ib_icon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    DockInfo.updateInterval = 0;
-                    final ProgressDialog progressDialog = ProgressDialog.show(context,"",getString(R.string.loading));
-                    progressDialog.setCancelable(true);
-                    UpdateTask task = new UpdateTask(context);
-                    task.setUpdateTaskStateChange(new UpdateTask.onUpdateTaskStateChange() {
-
-                        @Override
-                        public void AfterTask() {
-
-                            progressDialog.dismiss();
-                            refreshAllView();
-                        }
-                    });
-                    task.execute();
-//                    new UpdateTask(v.getContext()).execute();
-
-                }
-            });
-
-        vp_page.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-                setTab(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        RxViewPager.pageSelections(vp_page).subscribe(this::setTab);
 
         for(final TextView textView : tabs){
 
             View view = (View) textView.getParent();
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            RxView.clicks(view).subscribe(aVoid -> {
 
-                    int position = (int) textView.getTag();
-                    vp_page.setCurrentItem(position);
-                    setTab(position);
-                }
+                int position = (int) textView.getTag();
+                vp_page.setCurrentItem(position);
+                setTab(position);
             });
         }
 
         handler = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
+        runnable = () -> {
 
-                refreshAllView();
-                handler.postDelayed(runnable,RUN_TIME);
-            }
+            refreshAllView();
+            handler.postDelayed(runnable,RUN_TIME);
         };
 
-        sw_title_on.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        sw_title_on.setOnCheckedChangeListener((buttonView, isChecked) -> {
 
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                if (!preferences.edit().putBoolean("on", isChecked).commit()){
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (!preferences.edit().putBoolean("on", isChecked).commit()){
 
-                    sw_title_on.setChecked(!isChecked);
-                }
+                sw_title_on.setChecked(!isChecked);
             }
         });
 
-        sw_title_auto_run.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        sw_title_auto_run.setOnCheckedChangeListener((buttonView, isChecked) -> {
 
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                if (!preferences.edit().putBoolean("auto_run", isChecked).commit()){
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (!preferences.edit().putBoolean("auto_run", isChecked).commit()){
 
-                    sw_title_auto_run.setChecked(!isChecked);
-                }
+                sw_title_auto_run.setChecked(!isChecked);
             }
         });
+
+        RxView.clicks(tv_goto_build_time).subscribe(aVoid -> startActivity(BuildTimeActivity.class));
+        RxView.clicks(tv_goto_make_time).subscribe(aVoid -> startActivity(MakeTimeActivity.class));
+        RxView.clicks(tv_web).subscribe(aVoid -> startActivity(WebActivity.class));
+        RxView.clicks(tv_setting).subscribe(aVoid -> startActivity(ZjsnViewer.class));
     }
 
     private void initFragment(){
 
-        travelFragemt = new TravelFragemt();
-        repairFragment = new RepairFragment();
-        buildFragment = new BuildFragment();
-        makeFragment = new MakeFragment();
-
         ArrayList<Fragment> fragments = new ArrayList<>();
-        fragments.add(travelFragemt);
-        fragments.add(repairFragment);
-        fragments.add(buildFragment);
-        fragments.add(makeFragment);
-
-        tv_travel.setTag(0);
-        tv_repair.setTag(1);
-        tv_build.setTag(2);
-        tv_make.setTag(3);
-        tv_repair.setEnabled(false);
-        tv_build.setEnabled(false);
-        tv_make.setEnabled(false);
+        fragments.add(travelFragment = new TravelFragment());
+        fragments.add(repairFragment = new RepairFragment());
+        fragments.add(buildFragment = new BuildFragment());
+        fragments.add(makeFragment = new MakeFragment());
 
         tabs = new ArrayList<>();
-        tabs.add(tv_travel);
-        tabs.add(tv_repair);
-        tabs.add(tv_build);
-        tabs.add(tv_make);
+        tabs.add(setTabView(tv_travel, 0, true));
+        tabs.add(setTabView(tv_repair, 1, false));
+        tabs.add(setTabView(tv_build, 2, false));
+        tabs.add(setTabView(tv_make, 3, false));
 
         vp_page.setOffscreenPageLimit(4);
         pageAdapter adapter = new pageAdapter(getSupportFragmentManager(), fragments);
@@ -292,6 +218,26 @@ public class InfoActivity extends FragmentActivity {
         vp_page.setAdapter(adapter);
         vp_page.setCurrentItem(0);
     }
+
+    private TextView setTabView(TextView textView, int position, boolean enable){
+
+        textView.setTag(position);
+        textView.setEnabled(enable);
+        return textView;
+    }
+
+    private void setTab(int position) {
+
+        if (position >= 0 && position < tabs.size()){
+
+            for (int i = 0; i < tabs.size(); i++){
+
+                if (i == position) tabs.get(i).setEnabled(true);
+                else tabs.get(i).setEnabled(false);
+            }
+        }
+    }
+
 
     private class pageAdapter extends FragmentPagerAdapter{
 
@@ -313,19 +259,6 @@ public class InfoActivity extends FragmentActivity {
         }
     }
 
-    private void setTab(int position) {
-
-        if (position >= 0 && position < tabs.size()){
-
-            for (int i = 0; i < tabs.size(); i++){
-
-                if (i == position) tabs.get(i).setEnabled(true);
-                else tabs.get(i).setEnabled(false);
-            }
-        }
-    }
-
-
     private void refreshAllView(){
 
         refreshView();
@@ -333,7 +266,7 @@ public class InfoActivity extends FragmentActivity {
         buildFragment.refreshView();
         repairFragment.refreshView();
         makeFragment.refreshView();
-        travelFragemt.refreshView();
+        travelFragment.refreshView();
     }
 
     private void refreshView(){

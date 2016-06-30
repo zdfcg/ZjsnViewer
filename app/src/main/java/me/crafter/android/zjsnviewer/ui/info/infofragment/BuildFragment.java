@@ -10,8 +10,9 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import me.crafter.android.zjsnviewer.util.DockInfo;
 import me.crafter.android.zjsnviewer.R;
+import me.crafter.android.zjsnviewer.util.DockInfo;
+import rx.Observable;
 
 
 public class BuildFragment extends Fragment {
@@ -44,14 +45,18 @@ public class BuildFragment extends Fragment {
 
         try {
 
-            String[] info = DockInfo.getBuildBoard();
-            textView1.setText(info[0]);
-            textView2.setText(info[1]);
-            textView3.setText(info[2]);
-            textView4.setText(info[3]);
+            Observable.just(DockInfo.getBuildBoard()).subscribe(this::setTextView);
         }catch (Exception e){
 
             e.printStackTrace();
         }
+    }
+
+    private void setTextView(String[] strings){
+
+        textView1.setText(strings[0]);
+        textView2.setText(strings[1]);
+        textView3.setText(strings[2]);
+        textView4.setText(strings[3]);
     }
 }

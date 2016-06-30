@@ -11,6 +11,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.crafter.android.zjsnviewer.R;
 import me.crafter.android.zjsnviewer.ui.BaseFragmentActivity;
+import rx.Observable;
 
 public class WebActivity extends BaseFragmentActivity{
 
@@ -40,18 +41,18 @@ public class WebActivity extends BaseFragmentActivity{
 
         for (int i = 0; i< names.length; i++){
 
-            list.add(changeNameAndUrlAndIcon(names[i], urls[i], icons[i]));
+            changeNameAndUrlAndIcon(names[i], urls[i], icons[i]).subscribe(list::add);
         }
         return list;
     }
 
-    private HashMap<String,String> changeNameAndUrlAndIcon(String name, String Url, String Icon_Url){
+    private Observable<HashMap<String,String>> changeNameAndUrlAndIcon(String name, String Url, String Icon_Url){
 
         HashMap<String,String> item = new HashMap<>();
         item.put("WEB_NAME", name);
         item.put("WEB_URL", Url);
         item.put("WEB_ICON", Icon_Url);
 
-        return item;
+        return Observable.just(item);
     }
 }
