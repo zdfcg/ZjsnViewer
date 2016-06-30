@@ -29,11 +29,10 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ExpandableListView
-        android:id="@+id/elv_build_time"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:groupIndicator="@null"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 </android.support.design.widget.CoordinatorLayout>
