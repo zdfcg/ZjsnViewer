@@ -23,7 +23,6 @@ import java.util.zip.InflaterInputStream;
 
 import me.crafter.android.zjsnviewer.config.Storage;
 import me.crafter.android.zjsnviewer.ZjsnApplication;
-import me.crafter.android.zjsnviewer.service.service.ProceedService;
 import me.crafter.android.zjsnviewer.ui.info.infoactivity.InfoActivity;
 
 public class NetworkManager {
@@ -172,7 +171,6 @@ public class NetworkManager {
                 urlString = getFinalUrl(urlString);
                 URL url = new URL(urlString);
                 Log.i("Session", url.toString());
-                ProceedService.appendLog("Session"+url.toString());
                 connection = url.openConnection();
                 connection.setConnectTimeout(15000);
                 connection.setReadTimeout(15000);
@@ -188,7 +186,6 @@ public class NetworkManager {
                 in.close();
                 if (response.contains("\"eid\"")){
                     Log.i("Session", "get eid");
-                    ProceedService.appendLog("Session"+"get eid");
                 }
 
             }catch (Exception ex) {
@@ -302,7 +299,6 @@ public class NetworkManager {
         Log.i("NetworkManager", "updateDockInfo()");
         Log.i("NetworkManager", "Unix: " + getCurrentUnixTime());
         if (!isOnline()){
-            ProceedService.appendLog("no network connection");
             return false;
         }
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context
@@ -320,7 +316,6 @@ public class NetworkManager {
             return false;
         }
         boolean success;
-        ProceedService.appendLog("update start");
         // STEP 1 PASSPORT LOGIN
         success = getAccountCookie();
         if (!success) return false;
@@ -331,8 +326,6 @@ public class NetworkManager {
         success =initGame();
         if (!success) return false;
         autoExplore();
-        InfoActivity.refreshInfoActivity();
-        ProceedService.appendLog("update success");
         return true;
     }
     public static boolean getAccountCookie(){

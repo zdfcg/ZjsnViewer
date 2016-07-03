@@ -1,16 +1,9 @@
 package me.crafter.android.zjsnviewer;
 
-import android.app.AlarmManager;
 import android.app.Application;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
 
-import java.util.Calendar;
-
-import me.crafter.android.zjsnviewer.service.receiver.AlarmReceiver;
-import me.crafter.android.zjsnviewer.service.service.ProceedService;
 import me.crafter.android.zjsnviewer.service.service.TimerService;
 import me.crafter.android.zjsnviewer.util.WakeLocker;
 
@@ -32,9 +25,7 @@ public class ZjsnApplication extends Application{
         instance = this;
         context = getApplicationContext();
 
-        startService(new Intent(this, ProceedService.class));
         startService(new Intent(this, TimerService.class));
-        WakeLocker.acquire(context);
     }
     public static ZjsnApplication getInstance() {
         return instance;
