@@ -22,6 +22,7 @@ import android.util.Log;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import me.crafter.android.zjsnviewer.ZjsnApplication;
 import me.crafter.android.zjsnviewer.util.DockInfo;
 import me.crafter.android.zjsnviewer.util.NotificationSender;
 import me.crafter.android.zjsnviewer.R;
@@ -35,7 +36,7 @@ import me.crafter.android.zjsnviewer.ui.widget.Widget_Travel;
 
 public class TimerService extends Service {
     // constant
-    public static long NOTIFY_INTERVAL = 5 * 1000; // 10 seconds
+    public static long NOTIFY_INTERVAL = 30 * 1000; // 10 seconds
     public static TimerService instance;
     public static int NOTIFICATION_ID = 1314;
 
@@ -135,6 +136,8 @@ public class TimerService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent){
+        // 应该是没什么用，现在国产rom杀进程的时候会干掉一切相关的service，application
+        // 这样就算死前发了个alarm，到点了也没有receiver来接收
         // test
         Log.d("TimerService", "onTaskRemoved is called");
         Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
@@ -151,13 +154,23 @@ public class TimerService extends Service {
     class TimeDisplayTimerTask extends TimerTask {
         @Override
         public void run() {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    new Proceed().execute();
-                }
-            });
+//            new Proceed().execute();
+            startService(new Intent(instance,ProceedService.class));
+            setForeGround(instance);
+            refresh_notify_interval();
         }
+    }
+
+    public void refresh_notify_interval(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ZjsnApplication.getAppContext());
+        if (NOTIFY_INTERVAL != (Long.valueOf(prefs.getString("refresh", "60"))) * 1000) {
+
+            NOTIFY_INTERVAL = (Long.valueOf(prefs.getString("refresh", "60"))) * 1000;
+            mTimer.cancel();
+            mTimer = new Timer();
+            mTimer.scheduleAtFixedRate(new TimeDisplayTimerTask(), NOTIFY_INTERVAL, NOTIFY_INTERVAL);
+        }
+        Log.i("TimerService", "NOTIFY_INTERVAL:" + NOTIFY_INTERVAL + " refresh:" + prefs.getString("refresh", "60"));
     }
 
     private class Proceed extends AsyncTask {

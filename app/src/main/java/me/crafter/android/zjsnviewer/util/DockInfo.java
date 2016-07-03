@@ -388,7 +388,7 @@ public class DockInfo {
                 //to prevent multi request caused by delay
                 if (updateInterval == 0) updateInterval =15;
                 lastUpdate = currentUnix();
-                NetworkManager.updateDockInfo();
+                ret = NetworkManager.updateDockInfo();
             } else {
                 ret = false;
             }
