@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="web_site_names">
+        <item>幻萌官网(没啥卯月)</item>
+        <item>舰少资料库</item>
+        <item>舰R百科</item>
+        <item>萌娘百科</item>
+        <item>NGA舰R区</item>
+    </string-array>
+
+    <string-array name="web_site_urls">
+        <item>http://www.jianniang.com/default.html</item>
+        <item>http://js.ntwikis.com/</item>
+        <item>http://www.zjsnrwiki.com/wiki/首页</item>
+        <item>https://zh.moegirl.org/战舰少女</item>
+        <item>http://nga.178.com/thread.php?fid=-149110</item>
+    </string-array>
+
+    <string-array name="web_site_icons">
+        <item>http://static.jianniang.com/jianNiang/last/images/logo_text.png</item>
+        <item>http://js.ntwikis.com/jsp/apps/cancollezh/img/can.ico</item>
+        <item>http://www.zjsnrwiki.com/icon.ico</item>
+        <item>https://zh.moegirl.org/favicon.ico</item>
+        <item>http://bbs.nga.cn/favicon.ico</item>
+    </string-array>
+</resources>

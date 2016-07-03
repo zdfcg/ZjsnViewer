@@ -65,11 +65,6 @@ public class TimerService extends Service {
     public Notification getForeGroundNotification(Context context){
         String[] info = DockInfo.getTravelBoard();
         String title = Storage.str_tiduName;
-        String text = Storage.str_thereIs[Storage.language] + DockInfo.countTravelIng() + Storage.str_teamsTravelling[Storage.language];
-        String msg = "";
-        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle()
-                .setBigContentTitle(title)
-                .setSummaryText(text);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String msj_name = prefs.getString("notification_msj_name","");
         if (!msj_name.isEmpty()){
@@ -77,6 +72,11 @@ public class TimerService extends Service {
             Storage.language = Integer.parseInt(prefs.getString("language", "0"));
             title = msj_name + Storage.str_msj_foreground_reportTitle[Storage.language];
         }
+        String text = Storage.str_thereIs[Storage.language] + DockInfo.countTravelIng() + Storage.str_teamsTravelling[Storage.language];
+        String msg = "";
+        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle()
+                .setBigContentTitle(title)
+                .setSummaryText(text);
 
         for (int i = 0; i < 4; i++){
 //            style.addLine(info[i]);

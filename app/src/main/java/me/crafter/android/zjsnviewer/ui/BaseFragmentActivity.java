@@ -1,10 +1,10 @@
 package me.crafter.android.zjsnviewer.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import me.crafter.android.zjsnviewer.R;
 import me.crafter.android.zjsnviewer.ZjsnApplication;
@@ -18,7 +18,7 @@ import me.crafter.android.zjsnviewer.ZjsnApplication;
 
 public class BaseFragmentActivity extends FragmentActivity {
 
-    private final String TAG = "BaseFragmentActivity";
+    private final String TAG = BaseFragmentActivity.class.getSimpleName();
 
     protected Context context;
     protected ZjsnApplication application;
@@ -44,16 +44,22 @@ public class BaseFragmentActivity extends FragmentActivity {
 
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             toolbar.setTitle(title);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    finish();
-                }
-            });
+            toolbar.setNavigationOnClickListener(v -> finish());
         }catch (Exception e){
 
             e.printStackTrace();
         }
-    };
+    }
+
+    protected void startActivity(Class<?> cls){
+
+        Intent intent = new Intent(context, cls);
+        startActivity(intent);
+    }
+
+    protected void startActivityForResult(Class<?> cls, int requestCode){
+
+        Intent intent = new Intent(context, cls);
+        startActivityForResult(intent, requestCode);
+    }
 }

@@ -1,7 +1,8 @@
 package me.crafter.android.zjsnviewer.ui.time;
 
 import android.os.Bundle;
-import android.widget.ExpandableListView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
@@ -22,8 +23,7 @@ public class BuildTimeActivity extends BaseFragmentActivity {
 
     private final String TAG = "BuildTimeActivity";
 
-    @BindView(R.id.elv_build_time)
-    ExpandableListView elv_build_time;
+    @BindView(R.id.rv_time) RecyclerView rv_time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +39,7 @@ public class BuildTimeActivity extends BaseFragmentActivity {
         ArrayList<ArrayList<String>> nameslist = JsonUtil.TimesJsonGetName(json);
 
         TimeAdapter adapter = new TimeAdapter(context,timelist,nameslist);
-        elv_build_time.setAdapter(adapter);
+        rv_time.setLayoutManager(new LinearLayoutManager(context));
+        rv_time.setAdapter(adapter);
     }
 }
