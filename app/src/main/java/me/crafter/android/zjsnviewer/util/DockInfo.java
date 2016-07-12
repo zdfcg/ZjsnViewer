@@ -26,10 +26,13 @@ public class DockInfo {
     public static int[] dockTravelTime = {0, 0, 0, 0};
     public static int[] exploreID = {0, 0, 0, 0};
     public static int[] dockRepairTime = {0, 0, 0, 0};
+    public static int[] dockRepairShip = {0, 0, 0, 0};
     public static int[] dockBuildTime = {0, 0, 0, 0};
     public static int[] dockMakeTime = {0, 0, 0, 0};
 
     public static int updateInterval = 15;
+
+    public static JSONObject Dock;
 
     public static String exp = "0";
     public static String nextExp = "0";
@@ -297,6 +300,8 @@ public class DockInfo {
                 error = Storage.str_noUserData[Storage.language];
                 Storage.str_tiduName = error;
                 return false;
+            } else {
+                Dock = data;
             }
     
             Storage.str_tiduName = data.getJSONObject("userVo").getString("username");
@@ -306,6 +311,7 @@ public class DockInfo {
     
             JSONObject pveExploreVo = data.getJSONObject("pveExploreVo");
             parseExploreJSON(pveExploreVo);
+            parseRepair(response);
             JSONArray dockVo = data.getJSONArray("dockVo");
             JSONArray repairDockVo = data.getJSONArray("repairDockVo");
             JSONArray equipmentDockVo = data.getJSONArray("equipmentDockVo");
@@ -317,14 +323,6 @@ public class DockInfo {
                     dockBuildTime[i] = o.getInt("endTime");
                 } else {
                     dockBuildTime[i] = 0;
-                }
-                o = repairDockVo.getJSONObject(i);
-                if (o.getInt("locked") == 1){
-                    dockRepairTime[i] = -1;
-                } else if (o.has("endTime")){
-                    dockRepairTime[i] = o.getInt("endTime");
-                } else {
-                    dockRepairTime[i] = 0;
                 }
                 o = equipmentDockVo.getJSONObject(i);
                 if (o.getInt("locked") == 1){
@@ -354,6 +352,29 @@ public class DockInfo {
         return true;
     }
 
+    public static boolean parseRepair(String response){
+        try {
+            JSONObject data = new JSONObject(response);
+            JSONArray repairDockVo = data.getJSONArray("repairDockVo");
+            for (int i = 0; i < repairDockVo.length(); i++){
+                JSONObject o = repairDockVo.getJSONObject(i);
+                dockRepairShip[i] = 0;
+                if (o.getInt("locked") == 1){
+                    dockRepairTime[i] = -1;
+                } else if (o.has("endTime")){
+                    dockRepairTime[i] = o.getInt("endTime");
+                    dockRepairShip[i] = o.getInt("shipId");
+                } else {
+                    dockRepairTime[i] = 0;
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
     public static void parseExploreJSON(JSONObject pveExploreVo) throws JSONException {
         JSONArray levels = pveExploreVo.getJSONArray("levels");
 //            boolean shouldExplore = false;

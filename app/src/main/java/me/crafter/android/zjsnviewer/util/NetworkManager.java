@@ -8,16 +8,19 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.InflaterInputStream;
 
@@ -35,9 +38,11 @@ public class NetworkManager {
     public static String url_passport_hm_ios = "http://loginios.jianniang.com/index/passportLogin/";// +username/password
 
     public static String api_login = "index/login/";//+uid
+    public static String api_init = "api/initGame";
     public static String api_Explore = "explore/start/"; // +fleetID/+exploreID/
     public static String api_getExploreResult = "explore/getResult/"; // +exploreID/
-    public static String api_init = "api/initGame";
+    public static String api_repair = "boat/repair/"; // +shipID/DockID/
+    public static String api_repairComplete = "boat/repairComplete/"; // +DockID/+shipID/
 
     public static String url_login = "";
     public static String url_server = "";
@@ -258,6 +263,75 @@ public class NetworkManager {
             return true;
         }
     }
+
+    public static boolean autoRepair(){
+        Log.d("NetworkManager", "autoRepair");
+        boolean repaired = false;
+//        get broken ship list
+        List<Integer> broken_ships_id = new ArrayList<>();
+        try {
+            JSONArray ships = DockInfo.Dock.getJSONArray("userShipVO");
+            for (int i = 0; i < ships.length(); i++) {
+                int hp = ships.getJSONObject(i).getJSONObject("battleProps").getInt("hp");
+                int max_hp = ships.getJSONObject(i).getJSONObject("battlePropsMax").getInt("hp");
+                if (hp != max_hp) {
+                    int ship_id = ships.getJSONObject(i).getInt("id");
+                    broken_ships_id.add(ship_id);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (broken_ships_id.size() == 0) return true;
+
+        for (int i = 0; i < DockInfo.dockRepairTime.length; i++){
+            int endTime = DockInfo.dockRepairTime[i];
+            if (endTime < 1) continue;
+            if(endTime < currentUnix()) {
+                NetworkManager.repairComplete(i+1,DockInfo.dockRepairShip[i]);
+            }
+        }
+
+        for (int i = 0; i < DockInfo.dockRepairTime.length; i++){
+            int endTime = DockInfo.dockRepairTime[i];
+            if(endTime == 0 && broken_ships_id.size() > 0) {
+                NetworkManager.repair(broken_ships_id.remove(0), i+1);
+            }
+        }
+        return true;
+    }
+
+    public static boolean repair(int dockId, int shipId){
+//        get repair result
+
+        String urString = url_server + api_repair + shipId + "/" + dockId;
+        OperateSession exploreSession = new OperateSession(urString);
+        exploreSession.urlString = urString;
+        String response;
+
+        response = exploreSession.open();
+        if (response.contains("\"eid\"")){
+            Log.i("autoRepair()", "get eid when auto explore.");
+            return false;
+        } else {
+            DockInfo.parseRepair(response);
+            return true;
+        }
+    }
+    public static boolean repairComplete(int dockId, int shipId){
+        String urString = url_server + api_repairComplete + dockId + "/" + shipId;
+        OperateSession exploreSession = new OperateSession(urString);
+        String response;
+        response = exploreSession.open();
+        if (response.contains("\"eid\"")){
+            Log.i("autoRepair()", "get eid when get reward.");
+            return false;
+        } else {
+            DockInfo.parseRepair(response);
+        }
+        return true;
+    }
     public static void initServer(){
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ZjsnApplication.getAppContext());
         String server = prefs.getString("server", "-1");
@@ -326,6 +400,7 @@ public class NetworkManager {
         success =initGame();
         if (!success) return false;
         autoExplore();
+        autoRepair();
         return true;
     }
     public static boolean getAccountCookie(){
