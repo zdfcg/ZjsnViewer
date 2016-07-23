@@ -154,8 +154,8 @@ public class TimerService extends Service {
     class TimeDisplayTimerTask extends TimerTask {
         @Override
         public void run() {
-//            new Proceed().execute();
-            startService(new Intent(instance,ProceedService.class));
+            new Proceed().execute();
+//            startService(new Intent(instance,ProceedService.class));
             setForeGround(instance);
             refresh_notify_interval();
         }

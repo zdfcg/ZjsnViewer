@@ -149,7 +149,7 @@ public class NetworkManager {
      */
     public static String getFinalUrl(String urString) {
         String FinalUrl = urString + "/&t=" + getCurrentUnixTime();
-        String market = "&gz=1&market=2&channel=0&version=2.4.0";
+        String market = "&gz=1&market=2&channel=0&version=2.5.0";
         //返回的是一个16位散列，暂时猜测是md5
         String FinalMd5 = md5(FinalUrl);
         FinalUrl += "&e=" + FinalMd5 + market;
@@ -288,15 +288,17 @@ public class NetworkManager {
         for (int i = 0; i < DockInfo.dockRepairTime.length; i++){
             int endTime = DockInfo.dockRepairTime[i];
             if (endTime < 1) continue;
+
             if(endTime < currentUnix()) {
                 NetworkManager.repairComplete(i+1,DockInfo.dockRepairShip[i]);
             }
+            broken_ships_id.remove(Integer.valueOf(DockInfo.dockRepairShip[i]));
         }
 
         for (int i = 0; i < DockInfo.dockRepairTime.length; i++){
             int endTime = DockInfo.dockRepairTime[i];
             if(endTime == 0 && broken_ships_id.size() > 0) {
-                NetworkManager.repair(broken_ships_id.remove(0), i+1);
+                NetworkManager.repair(i+1, broken_ships_id.remove(0));
             }
         }
         return true;
