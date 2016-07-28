@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.crafter.android.zjsnviewer">
+          package="me.crafter.android.zjsnviewer">
 
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name=".ZjsApplication"
@@ -16,74 +16,72 @@
             android:name=".ui.widget.Widget_Repair"
             android:label="@string/repair_widget_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget__repair_info" />
+                android:resource="@xml/widget__repair_info"/>
         </receiver>
         <receiver
             android:name=".ui.widget.Widget_Build"
             android:label="@string/build_widget_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget__build_info" />
+                android:resource="@xml/widget__build_info"/>
         </receiver>
         <receiver
             android:name=".ui.widget.Widget_Make"
             android:label="@string/make_widget_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget__make_info" />
+                android:resource="@xml/widget__make_info"/>
         </receiver>
         <receiver
             android:name=".ui.widget.Widget_Travel"
             android:label="@string/travel_widget_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget__travel_info" />
+                android:resource="@xml/widget__travel_info"/>
         </receiver>
         <receiver
             android:name=".ui.widget.Widget_Main"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget__main_info" />
+                android:resource="@xml/widget__main_info"/>
         </receiver>
 
         <service android:name=".service.service.TimerService">
-
         </service>
 
         <receiver
             android:name=".service.receiver.ScreenReceiver"
             android:enabled="true"
             android:exported="true">
-
         </receiver>
 
         <activity
             android:name=".ui.preference.unknow.SettingsActivity"
             android:label="@string/title_activity_settings">
             <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
@@ -100,7 +98,7 @@
             android:parentActivityName=".ui.preference.main.ZjsnViewer">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.preference.main.ZjsnViewer" />
+                android:value=".ui.preference.main.ZjsnViewer"/>
             >
         </activity>
 
@@ -111,7 +109,7 @@
             android:parentActivityName=".ui.preference.main.ZjsnViewer">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.preference.main.ZjsnViewer" />
+                android:value=".ui.preference.main.ZjsnViewer"/>
             >
         </activity>
 
@@ -122,7 +120,7 @@
             android:parentActivityName=".ui.preference.main.ZjsnViewer">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.preference.main.ZjsnViewer" />
+                android:value=".ui.preference.main.ZjsnViewer"/>
             >
         </activity>
 
@@ -133,7 +131,7 @@
             android:parentActivityName=".ui.preference.main.ZjsnViewer">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.preference.main.ZjsnViewer" />
+                android:value=".ui.preference.main.ZjsnViewer"/>
             >
         </activity>
         <activity
@@ -142,28 +140,26 @@
             android:parentActivityName=".ui.preference.main.ZjsnViewer">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.preference.main.ZjsnViewer" />
+                android:value=".ui.preference.main.ZjsnViewer"/>
             >
         </activity>
-        <activity android:name=".ui.info.infoactivity.InfoActivity">
-
+        <activity android:name=".ui.info.infoactivity.InfoActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity android:name=".ui.web.WebActivity">
-
         </activity>
-
         <activity android:name=".ui.time.BuildTimeActivity">
-
         </activity>
-
         <activity android:name=".ui.time.MakeTimeActivity">
-
+        </activity>
+        <activity android:name=".ui.equipment.list.EquipmentListActivity">
+        </activity>
+        <activity android:name=".ui.equipment.info.EquipmentInfoActivity">
         </activity>
     </application>
 

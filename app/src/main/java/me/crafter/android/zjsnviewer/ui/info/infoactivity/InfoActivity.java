@@ -2,10 +2,8 @@ package me.crafter.android.zjsnviewer.ui.info.infoactivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -28,6 +26,7 @@ import me.crafter.android.zjsnviewer.R;
 import me.crafter.android.zjsnviewer.config.Storage;
 import me.crafter.android.zjsnviewer.service.task.UpdateTask;
 import me.crafter.android.zjsnviewer.ui.BaseFragmentActivity;
+import me.crafter.android.zjsnviewer.ui.equipment.list.EquipmentListActivity;
 import me.crafter.android.zjsnviewer.ui.info.infofragment.BuildFragment;
 import me.crafter.android.zjsnviewer.ui.info.infofragment.MakeFragment;
 import me.crafter.android.zjsnviewer.ui.info.infofragment.RepairFragment;
@@ -56,7 +55,7 @@ public class InfoActivity extends BaseFragmentActivity {
 
     @BindView(R.id.tv_drawer_name) TextView tv_drawer_name;
     @BindView(R.id.tv_drawer_level) TextView tv_drawer_level;
-    @BindView(R.id.tv_build_time) TextView tv_build_time;
+    @BindView(R.id.tv_equipment) TextView tv_equipment;
 
     @BindView(R.id.sw_title_on) Switch sw_title_on;
     @BindView(R.id.sw_title_auto_run) Switch sw_title_auto_run;
@@ -159,8 +158,7 @@ public class InfoActivity extends BaseFragmentActivity {
 
         sw_title_on.setOnCheckedChangeListener((buttonView, isChecked) -> {
 
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            if (!preferences.edit().putBoolean("on", isChecked).commit()){
+            if (!SharePreferenceUtil.getInstance().writeValue("on", isChecked)){
 
                 sw_title_on.setChecked(!isChecked);
             }
@@ -168,10 +166,9 @@ public class InfoActivity extends BaseFragmentActivity {
 
         sw_title_auto_run.setOnCheckedChangeListener((buttonView, isChecked) -> {
 
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            if (!preferences.edit().putBoolean("auto_run", isChecked).commit()){
+            if (!SharePreferenceUtil.getInstance().writeValue("auto_run", isChecked)){
 
-                sw_title_auto_run.setChecked(!isChecked);
+                sw_title_on.setChecked(!isChecked);
             }
         });
 
@@ -179,6 +176,7 @@ public class InfoActivity extends BaseFragmentActivity {
         RxView.clicks(tv_goto_make_time).subscribe(aVoid -> startActivity(MakeTimeActivity.class));
         RxView.clicks(tv_web).subscribe(aVoid -> startActivity(WebActivity.class));
         RxView.clicks(tv_setting).subscribe(aVoid -> startActivity(ZjsnViewer.class));
+        RxView.clicks(tv_equipment).subscribe(aVoid -> startActivity(EquipmentListActivity.class));
     }
 
     private void initFragment(){

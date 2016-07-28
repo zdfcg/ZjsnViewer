@@ -29,7 +29,7 @@ public class BuildTimeActivity extends BaseFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_time);
+        setContentView(R.layout.layout_list);
         setToolbarTitle(R.string.build_time_info);
         ButterKnife.bind(this);
 

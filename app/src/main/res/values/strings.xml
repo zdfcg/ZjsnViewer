@@ -57,5 +57,26 @@
     <string name="web_site">攻略站点</string>
     <string name="build_time_info">建造时间</string>
     <string name="make_time_info">开发时间</string>
+    <string name="equipment">装备(衣服)</string>
+
+    <string name="equipment_id">图鉴编号</string>
+    <string name="equipment_time">开发时间</string>
+    <string name="equipment_threshold">开发阈值</string>
+    <string name="equipment_from">获取</string>
+    <string name="equipment_range">射程</string>
+    <string name="equipment_fire">火力</string>
+    <string name="equipment_torpedo">鱼雷</string>
+    <string name="equipment_antisubmarine">对潜</string>
+    <string name="equipment_boom">轰炸</string>
+    <string name="equipment_antiair">对空</string>
+    <string name="equipment_armor">装甲</string>
+    <string name="equipment_hit">命中</string>
+    <string name="equipment_flee">回避</string>
+    <string name="equipment_tracking">索敌</string>
+    <string name="equipment_lucky">幸运</string>
+    <string name="equipment_antiair_correct">对空补正</string>
+    <string name="equipment_special_effect">特殊效果</string>
+
+    <string name="service_error_load_error">数据加载出错</string>
 
 </resources>

@@ -4,8 +4,19 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
 
-        <item name="android:actionMenuTextColor">@color/font_white</item>
+        <item name="actionMenuTextColor">@color/font_white</item>
         <item name="colorPrimary">@color/background_blue</item>
-        <item name="android:statusBarColor">@color/background_blue</item>
+        <item name="colorPrimaryDark">@color/background_blue</item>
     </style>
+
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="actionMenuTextColor">@color/font_white</item>
+        <item name="colorPrimary">@color/background_blue</item>
+        <item name="colorPrimaryDark">@color/background_blue</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
 </resources>

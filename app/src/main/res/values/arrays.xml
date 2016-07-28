@@ -24,4 +24,13 @@
         <item>https://zh.moegirl.org/favicon.ico</item>
         <item>http://bbs.nga.cn/favicon.ico</item>
     </string-array>
+
+    <array name="range_color">
+        <item>@color/range_1_color</item>
+        <item>@color/range_2_color</item>
+        <item>@color/range_3_color</item>
+        <item>@color/range_4_color</item>
+        <item>@color/range_5_color</item>
+        <item>@color/range_6_color</item>
+    </array>
 </resources>
