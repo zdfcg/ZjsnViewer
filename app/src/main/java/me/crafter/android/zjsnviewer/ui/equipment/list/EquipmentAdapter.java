@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -125,10 +124,10 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
         int equipment_lucky = Integer.valueOf(item.get("equipment_lucky").toString());
         if (equipment_lucky != 0) power.append("|").append(context.getString(R.string.equipment_lucky)).append(":").append(equipment_lucky);
 
-        float equipment_antiair_correct = Float.valueOf(item.get("equipment_antiair_correct").toString());
-        NumberFormat percent_format = NumberFormat.getPercentInstance();
-        if (equipment_antiair_correct != 0)
-            power.append("|").append(context.getString(R.string.equipment_antiair_correct)).append(":").append(percent_format.format(equipment_antiair_correct));
+//        float equipment_antiair_correct = Float.valueOf(item.get("equipment_antiair_correct").toString());
+//        NumberFormat percent_format = NumberFormat.getPercentInstance();
+//        if (equipment_antiair_correct != 0)
+//            power.append("|").append(context.getString(R.string.equipment_antiair_correct)).append(":").append(percent_format.format(equipment_antiair_correct));
 
         String equipment_special_effect = item.get("equipment_special_effect").toString();
         if (!equipment_special_effect.isEmpty()) power.append("|").append(context.getString(R.string.equipment_special_effect)).append(":").append(equipment_special_effect);
