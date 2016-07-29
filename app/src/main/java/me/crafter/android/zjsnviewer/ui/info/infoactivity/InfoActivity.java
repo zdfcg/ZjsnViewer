@@ -172,11 +172,26 @@ public class InfoActivity extends BaseFragmentActivity {
             }
         });
 
-        RxView.clicks(tv_goto_build_time).subscribe(aVoid -> startActivity(BuildTimeActivity.class));
-        RxView.clicks(tv_goto_make_time).subscribe(aVoid -> startActivity(MakeTimeActivity.class));
-        RxView.clicks(tv_web).subscribe(aVoid -> startActivity(WebActivity.class));
-        RxView.clicks(tv_setting).subscribe(aVoid -> startActivity(ZjsnViewer.class));
-        RxView.clicks(tv_equipment).subscribe(aVoid -> startActivity(EquipmentListActivity.class));
+        RxView.clicks(tv_goto_build_time).subscribe(aVoid -> {
+            startActivity(BuildTimeActivity.class);
+            dl_drawer.closeDrawers();
+        });
+        RxView.clicks(tv_goto_make_time).subscribe(aVoid -> {
+            startActivity(MakeTimeActivity.class);
+            dl_drawer.closeDrawers();
+        });
+        RxView.clicks(tv_web).subscribe(aVoid -> {
+            startActivity(WebActivity.class);
+            dl_drawer.closeDrawers();
+        });
+        RxView.clicks(tv_setting).subscribe(aVoid -> {
+            startActivity(ZjsnViewer.class);
+            dl_drawer.closeDrawers();
+        });
+        RxView.clicks(tv_equipment).subscribe(aVoid -> {
+            startActivity(EquipmentListActivity.class);
+            dl_drawer.closeDrawers();
+        });
     }
 
     private void initFragment(){

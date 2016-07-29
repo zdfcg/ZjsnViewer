@@ -9,7 +9,7 @@ package me.crafter.android.zjsnviewer.config;
 
 public class ConfigFile {
 
-    public static final String SERVICE_IP = "http://172.26.131.200:8000";
+    public static final String SERVICE_IP = "http://172.26.131.74:8000";
     public static final String SERVICE_NAME = "/app_service";
     public static final String SERVICE_SUCCESS = "success";
 

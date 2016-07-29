@@ -6,14 +6,28 @@
     android:orientation="horizontal"
     android:padding="5dp">
 
-    <ImageView
-        android:id="@+id/iv_equipment_icon"
+    <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="80dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:layout_gravity="center"
-        android:src="@drawable/pic_error"
-        android:scaleType="centerInside"/>
+        android:orientation="vertical">
+
+
+        <ImageView
+            android:id="@+id/iv_equipment_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_gravity="top|center"
+            android:src="@drawable/pic_error"
+            android:scaleType="centerInside"/>
+
+        <TextView
+            android:id="@+id/tv_equipment_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -30,20 +44,13 @@
                 android:id="@+id/tv_equipment_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"/>
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
 
             <TextView
                 android:id="@+id/tv_equipment_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-            <TextView
-                android:id="@+id/tv_equipment_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:gravity="center|end"/>
 
         </LinearLayout>
 
@@ -52,12 +59,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|start"
+            android:paddingTop="5dp"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_equipment_threshold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
 
             <TextView
                 android:id="@+id/tv_equipment_time"
@@ -67,23 +82,13 @@
                 android:layout_alignParentEnd="true"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-            <TextView
-                android:id="@+id/tv_equipment_threshold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"/>
-
         </RelativeLayout>
 
         <TextView
             android:id="@+id/tv_equipment_from"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center|start"
-            android:layout_marginTop="5dp"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
+
     </LinearLayout>
 </LinearLayout>
