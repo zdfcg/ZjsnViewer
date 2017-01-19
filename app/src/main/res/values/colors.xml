@@ -16,5 +16,17 @@
     <color name="font_alpha">#77ffffff</color>
     <color name="font_alpha_black">#aa000000</color>
     <color name="background_dark_blue">#2896d8</color>
+    <color name="background_alpha">#77aaaaaa</color>
+
+    <color name="load_blue">#28a6d8</color>
+    <color name="load_green">#28d8a6</color>
+    <color name="load_yellow">#ffd700</color>
+
+    <color name="range_1_color">#000000</color>
+    <color name="range_2_color">#00ff00</color>
+    <color name="range_3_color">#0088ff</color>
+    <color name="range_4_color">#aa00ff</color>
+    <color name="range_5_color">#ffd700</color>
+    <color name="range_6_color">#ff0000</color>
 
 </resources>

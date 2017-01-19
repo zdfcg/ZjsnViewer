@@ -3,7 +3,7 @@ package me.crafter.android.zjsnviewer.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import me.crafter.android.zjsnviewer.R;
@@ -16,7 +16,7 @@ import me.crafter.android.zjsnviewer.ZjsnApplication;
  * @desc
  */
 
-public class BaseFragmentActivity extends FragmentActivity {
+public class BaseFragmentActivity extends AppCompatActivity {
 
     private final String TAG = BaseFragmentActivity.class.getSimpleName();
 
