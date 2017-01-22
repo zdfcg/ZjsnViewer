@@ -39,9 +39,6 @@ public class TimerService extends Service {
     public static long NOTIFY_INTERVAL = 30 * 1000; // 10 seconds
     public static TimerService instance;
     public static int NOTIFICATION_ID = 1314;
-
-    public static BroadcastReceiver mReceiver;
-
     public static int lastWidgetUpdate = 0;
 
     // run on another Thread to avoid crash
@@ -105,12 +102,10 @@ public class TimerService extends Service {
     @Override
     public void onCreate() {
         Log.i("TimerService", "onCreate()");
-        if (mReceiver == null){
-            IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
-            filter.addAction(Intent.ACTION_SCREEN_OFF);
-            mReceiver = new ScreenReceiver();
-            registerReceiver(mReceiver, filter);
-        }
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MyWakelockTag");
+        wakeLock.acquire();
 
         if (mTimer != null) {
             mTimer.cancel();
@@ -121,11 +116,6 @@ public class TimerService extends Service {
         mTimer.scheduleAtFixedRate(new TimeDisplayTimerTask(), 0, NOTIFY_INTERVAL);
 
         setForeGround(this);
-
-        receive = new ForegroundReceive();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("OnOrOff");
-        registerReceiver(receive, filter);
     }
 
     @Override

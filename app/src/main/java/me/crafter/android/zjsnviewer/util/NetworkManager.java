@@ -75,7 +75,8 @@ public class NetworkManager {
             "http://s9.jr.moefantasy.com/",
             "http://s10.jr.moefantasy.com/",
             "http://s11.jr.moefantasy.com/",
-            "http://s12.jr.moefantasy.com/"
+            "http://s12.jr.moefantasy.com/",
+            "http://s13.jr.moefantasy.com/"
     };
 
     public static String[] url_server_hm_ios = {
@@ -149,7 +150,7 @@ public class NetworkManager {
      */
     public static String getFinalUrl(String urString) {
         String FinalUrl = urString + "/&t=" + getCurrentUnixTime();
-        String market = "&gz=1&market=2&channel=0&version=2.5.0";
+        String market = "&gz=1&market=2&channel=0&version=2.8.0";
         //返回的是一个16位散列，暂时猜测是md5
         String FinalMd5 = md5(FinalUrl);
         FinalUrl += "&e=" + FinalMd5 + market;
@@ -420,6 +421,15 @@ public class NetworkManager {
         try {
             JSONObject obj = new JSONObject(response);
             uid = obj.getInt("userId");
+            int server_id = obj.getInt("defaultServer");
+            JSONArray server_arr = obj.getJSONArray("serverList");
+            JSONObject s;
+            for (int i = 0; i < server_arr.length(); i++) {
+                s = server_arr.getJSONObject(i);
+                if (s.getInt("id")==server_id) {
+                    url_server = s.getString("host");
+                }
+            }
         } catch (JSONException ex) {
             Log.e("UpdateDockInfo()", "getAccountCookie error");
             ex.printStackTrace();
