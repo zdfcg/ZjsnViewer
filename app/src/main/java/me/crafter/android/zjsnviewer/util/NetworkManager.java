@@ -49,44 +49,6 @@ public class NetworkManager {
     public static int uid = 0;
     public static String loginCookie = "";
 
-    public static String[] url_server_p7 = {
-            "http://zj.alpha.p7game.com/",
-            "http://s2.zj.p7game.com/",
-            "http://s3.zj.p7game.com/",
-            "http://s4.zj.p7game.com/",
-            "http://s5.zj.p7game.com/",
-            "http://s6.zj.p7game.com/",
-            "http://s7.zj.p7game.com/",
-            "http://s8.zj.p7game.com/",
-            "http://s9.zj.p7game.com/",
-            "http://s10.zj.p7game.com/",
-            "http://s11.zj.p7game.com/",
-    };
-
-    public static String[] url_server_hm = {
-            "http://zj.alpha.jr.moefantasy.com/",
-            "http://s2.jr.moefantasy.com/",
-            "http://s3.jr.moefantasy.com/",
-            "http://s4.jr.moefantasy.com/",
-            "http://s5.jr.moefantasy.com/",
-            "http://s6.jr.moefantasy.com/",
-            "http://s7.jr.moefantasy.com/",
-            "http://s8.jr.moefantasy.com/",
-            "http://s9.jr.moefantasy.com/",
-            "http://s10.jr.moefantasy.com/",
-            "http://s11.jr.moefantasy.com/",
-            "http://s12.jr.moefantasy.com/",
-            "http://s13.jr.moefantasy.com/"
-    };
-
-    public static String[] url_server_hm_ios = {
-        "http://s101.jr.moefantasy.com/",
-        "http://s102.jr.moefantasy.com/",
-        "http://s103.jr.moefantasy.com/",
-        "http://s104.jr.moefantasy.com/",
-        "http://s105.jr.moefantasy.com/",
-        "http://s106.jr.moefantasy.com/"
-    };
     public static String getCurrentUnixTime() {
         long unixTime = System.currentTimeMillis();
         return String.valueOf(unixTime);
@@ -150,7 +112,7 @@ public class NetworkManager {
      */
     public static String getFinalUrl(String urString) {
         String FinalUrl = urString + "/&t=" + getCurrentUnixTime();
-        String market = "&gz=1&market=2&channel=0&version=2.8.0";
+        String market = "&gz=1&market=2&channel=0&version=3.0.1";
         //返回的是一个16位散列，暂时猜测是md5
         String FinalMd5 = md5(FinalUrl);
         FinalUrl += "&e=" + FinalMd5 + market;
@@ -339,17 +301,6 @@ public class NetworkManager {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ZjsnApplication.getAppContext());
         String server = prefs.getString("server", "-1");
         if (server.equals("-1")) return;
-        int serverId = Integer.parseInt(server);
-
-        if (serverId < 100){
-            url_server = url_server_p7[serverId];
-        }
-        else if (serverId < 200) {
-            url_server = url_server_hm[serverId-100];
-        }
-        else {
-            url_server = url_server_hm_ios[serverId-201];
-        }
 
         // Black: Alt Server
         boolean altserver = prefs.getBoolean("altserver", false);
@@ -358,11 +309,9 @@ public class NetworkManager {
         }
         Log.i("NetworkManager", "url_server:" + url_server);
 
-        if (serverId < 100){
-            url_login = url_passport_p7;
-        }else if (serverId < 200){
+        if (server.equals("android")){
             url_login = url_passport_hm;
-        }else {
+        }else if(server.equals("apple")) {
             url_login = url_passport_hm_ios;
         }
         if (altserver){
@@ -402,8 +351,8 @@ public class NetworkManager {
         // STEP 3 GET USER DATA
         success =initGame();
         if (!success) return false;
-        autoExplore();
-        autoRepair();
+//        autoExplore();
+//        autoRepair();
         return true;
     }
     public static boolean getAccountCookie(){
@@ -411,16 +360,23 @@ public class NetworkManager {
         String error = "";
         String username = prefs.getString("username", "none");
         String password = prefs.getString("password", "none");
+//        username = "";
         if (username.equals("none")|password.equals("none")) return false;
         String url;
         url = url_login + username+"/"+password;
         OperateSession workingSession = new OperateSession(url);
         String response = workingSession.open();
+        if (response.contains("\"eid\"")) {
+            Storage.str_tiduName = Storage.str_badLogin[Storage.language];
+            return false;
+        }
         loginCookie = workingSession.getCookie();
         if (loginCookie.equals("")) return false;
         try {
             JSONObject obj = new JSONObject(response);
             uid = obj.getInt("userId");
+
+
             int server_id = obj.getInt("defaultServer");
             JSONArray server_arr = obj.getJSONArray("serverList");
             JSONObject s;
