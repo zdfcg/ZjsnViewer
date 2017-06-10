@@ -1,6 +1,5 @@
 package me.crafter.android.zjsnviewer.ui.info.infoactivity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Switch;
@@ -37,6 +37,7 @@ import me.crafter.android.zjsnviewer.ui.time.MakeTimeActivity;
 import me.crafter.android.zjsnviewer.ui.web.WebActivity;
 import me.crafter.android.zjsnviewer.util.DockInfo;
 import me.crafter.android.zjsnviewer.util.SharePreferenceUtil;
+import me.crafter.android.zjsnviewer.view.SupportViewPageSwipeRefreshLayout;
 
 public class InfoActivity extends BaseFragmentActivity {
 
@@ -49,6 +50,7 @@ public class InfoActivity extends BaseFragmentActivity {
     @BindView(R.id.tv_repair) TextView tv_repair;
     @BindView(R.id.tv_build) TextView tv_build;
     @BindView(R.id.tv_make) TextView tv_make;
+    @BindView(R.id.srl_refresh) SupportViewPageSwipeRefreshLayout srl_refresh;
     @BindView(R.id.vp_page) ViewPager vp_page;
 
     @BindView(R.id.ib_icon) ImageButton ib_icon;
@@ -123,15 +125,19 @@ public class InfoActivity extends BaseFragmentActivity {
 
         RxView.clicks(ib_icon).subscribe(aVoid -> {
 
+            dl_drawer.openDrawer(Gravity.START);
+        });
+
+        srl_refresh.setOnRefreshListener(() -> {
+
             DockInfo.updateInterval = 0;
-            final ProgressDialog progressDialog = ProgressDialog.show(context, "", getString(R.string.loading));
-            progressDialog.setCancelable(true);
             UpdateTask task = new UpdateTask(context);
             task.setUpdateTaskStateChange(()-> {
 
-                    progressDialog.dismiss();
-                    refreshAllView();
-                });
+                Toast.makeText(InfoActivity.this,R.string.loading_success, Toast.LENGTH_SHORT).show();
+                srl_refresh.setRefreshing(false);
+                refreshAllView();
+            });
             task.execute();
         });
 

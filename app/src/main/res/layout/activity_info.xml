@@ -160,12 +160,19 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/vp_page"
+            <me.crafter.android.zjsnviewer.view.SupportViewPageSwipeRefreshLayout
+                android:id="@+id/srl_refresh"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            </android.support.v4.view.ViewPager>
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/vp_page"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </android.support.v4.view.ViewPager>
+            </me.crafter.android.zjsnviewer.view.SupportViewPageSwipeRefreshLayout>
 
 
         </LinearLayout>
@@ -289,6 +296,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         style="@style/DrawerLayoutLeftButton"
+                        android:visibility="gone"
                         android:text="@string/unavailable"/>
 
                 </LinearLayout>
