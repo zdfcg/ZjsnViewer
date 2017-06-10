@@ -97,14 +97,12 @@ public class InfoActivity extends BaseFragmentActivity {
         Boolean auto = SharePreferenceUtil.getInstance().getValue("auto_run", true);
         sw_title_on.setChecked(on);
         sw_title_auto_run.setChecked(auto);
-
-        handler.postDelayed(runnable, 2 * 1000);
+        srl_refresh.startRefresh();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        handler.removeCallbacks(runnable);
     }
 
     private void initData(){
@@ -117,7 +115,7 @@ public class InfoActivity extends BaseFragmentActivity {
 
     private void initView(){
 
-        refreshView();
+        srl_refresh.setColorSchemeResources(R.color.load_blue, R.color.load_green, R.color.load_yellow);
         initFragment();
     }
 
@@ -137,6 +135,9 @@ public class InfoActivity extends BaseFragmentActivity {
                 Toast.makeText(InfoActivity.this,R.string.loading_success, Toast.LENGTH_SHORT).show();
                 srl_refresh.setRefreshing(false);
                 refreshAllView();
+                handler.removeCallbacks(runnable);
+                run_time = Long.valueOf(SharePreferenceUtil.getInstance().getValue("refresh", "60"))*1000;
+                handler.postDelayed(runnable, run_time);
             });
             task.execute();
         });

@@ -399,6 +399,20 @@ public class SupportViewPageSwipeRefreshLayout extends ViewGroup implements Nest
         }
     }
 
+    @Override
+    public boolean onFilterTouchEventForSecurity(MotionEvent event) {
+        return super.onFilterTouchEventForSecurity(event);
+    }
+
+    public void startRefresh(){
+
+        setRefreshing(true);
+        if (mListener != null) {
+
+            mListener.onRefresh();
+        }
+    }
+
     @SuppressLint("NewApi")
     private void startScaleUpAnimation(Animation.AnimationListener listener) {
         mCircleView.setVisibility(View.VISIBLE);
