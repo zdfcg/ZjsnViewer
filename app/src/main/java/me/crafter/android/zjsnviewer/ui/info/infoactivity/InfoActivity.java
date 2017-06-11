@@ -97,7 +97,6 @@ public class InfoActivity extends BaseFragmentActivity {
         Boolean auto = SharePreferenceUtil.getInstance().getValue("auto_run", true);
         sw_title_on.setChecked(on);
         sw_title_auto_run.setChecked(auto);
-        srl_refresh.startRefresh();
     }
 
     @Override
@@ -199,6 +198,7 @@ public class InfoActivity extends BaseFragmentActivity {
             startActivity(EquipmentListActivity.class);
             dl_drawer.closeDrawers();
         });
+        srl_refresh.startRefresh();
     }
 
     private void initFragment(){
