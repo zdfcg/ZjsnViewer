@@ -50,7 +50,7 @@ public class Worker {
             String downloadLink = "";
             @Override
             protected Void doInBackground( final Void ... params ) {
-                String response = visit("http://zjsn.acg.land/version.json");
+                String response = visit("http://pnhome.azurewebsites.net/version.json");
                 if (response.equals("ERR1")){
                     state = State.CONNECTION_FAIL;
                     return null;

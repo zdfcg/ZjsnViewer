@@ -381,8 +381,8 @@ public class DockInfo {
         for (int i = 0; i < levels.length(); i++){
             JSONObject level = levels.getJSONObject(i);
             int endTime = level.getInt("endTime");
-            dockTravelTime[level.getInt("fleetId")-1] = endTime;
-            exploreID[level.getInt("fleetId")-1] = level.getInt("exploreId");
+            dockTravelTime[level.getInt("fleetId")-5] = endTime;
+            exploreID[level.getInt("fleetId")-5] = level.getInt("exploreId");
         }
     }
 

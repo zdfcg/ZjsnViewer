@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.0'
 
     defaultConfig {
         applicationId "me.crafter.android.zjsnviewer"
         minSdkVersion 16
-        targetSdkVersion 25
-        versionCode 33
-        versionName "2.8.3"
+        targetSdkVersion 26
+        versionCode 34
+        versionName "2.8.5"
     }
     lintOptions {
         abortOnError false
@@ -51,11 +51,11 @@ apply plugin: 'com.neenbedankt.android-apt'
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:appcompat-v7'
+    compile 'com.android.support:support-v4'
+    compile 'com.android.support:design'
     compile 'com.jaredrummler:android-processes:1.0.9'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.android.support:recyclerview-v7'
     compile 'com.github.bumptech.glide:glide:3.7.0'
 }
 dependencies {

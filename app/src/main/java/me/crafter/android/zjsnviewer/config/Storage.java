@@ -4,6 +4,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
@@ -58,13 +60,12 @@ public class Storage {
     public static String getZjsnPackageName(){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ZjsnApplication.getAppContext());
         int serverId = Integer.parseInt(prefs.getString("server", "-1"));
-        if (serverId == 0){
-            return "com.muka.shipwarzero";
-        } else if (serverId < 100){
-            return "com.muka.shipwar";
-        } else {
+        if (serverId == 0 | serverId == 1){
             return "com.huanmeng.zhanjian2";
+        } else if (serverId == 3){
+            return "com.huanmeng.zhanjian_jp_release";
         }
+        return null;
     }
 
     public static PendingIntent getStartPendingIntent(){
@@ -128,8 +129,18 @@ public class Storage {
     }
 
     public static int getVersion(){
-//        TODO 改成直接获取manifests内的版本信息
-        return ZjsnApplication.getAppContext().getResources().getInteger(R.integer.version);
+        Context context = ZjsnApplication.getAppContext();
+        int version;
+        PackageManager manager = context.getPackageManager();
+        try {
+            PackageInfo info = manager.getPackageInfo(
+                    context.getPackageName(), 0);
+             version = info.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            version = 9999;
+        }
+        return version;
     }
 
     public static boolean black(){

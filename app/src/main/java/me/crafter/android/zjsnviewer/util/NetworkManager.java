@@ -309,9 +309,9 @@ public class NetworkManager {
         }
         Log.i("NetworkManager", "url_server:" + url_server);
 
-        if (server.equals("android")){
+        if (server.equals("0")){
             url_login = url_passport_hm;
-        }else if(server.equals("apple")) {
+        }else if(server.equals("1")) {
             url_login = url_passport_hm_ios;
         }
         if (altserver){
