@@ -36,6 +36,7 @@ public class NetworkManager {
     //hm change the login in url as http://login.jr.moefantasy.com/index/passportLogin/ in 6/4/2016
     public static String url_passport_hm = "http://login.jr.moefantasy.com/index/passportLogin/";// +username/password
     public static String url_passport_hm_ios = "http://loginios.jianniang.com/index/passportLogin/";// +username/password
+    public static String url_passport_hm_jp = "http://loginand.jp.warshipgirls.com/index/passportLogin";
 
     public static String api_login = "index/login/";//+uid
     public static String api_init = "api/initGame";
@@ -188,7 +189,7 @@ public class NetworkManager {
         for (int i = 0; i < DockInfo.dockTravelTime.length; i++){
             int endTime = DockInfo.dockTravelTime[i];
             if(endTime < currentUnix()) {
-                explored = explored|NetworkManager.explore(DockInfo.exploreID[i], i+1);
+                explored = explored|NetworkManager.explore(DockInfo.exploreID[i], i+5);
             }
         }
         return explored;
@@ -313,6 +314,8 @@ public class NetworkManager {
             url_login = url_passport_hm;
         }else if(server.equals("1")) {
             url_login = url_passport_hm_ios;
+        }else if(server.equals("2")) {
+            url_login = url_passport_hm_jp;
         }
         if (altserver){
             url_login = prefs.getString("alt_url_login", "");
