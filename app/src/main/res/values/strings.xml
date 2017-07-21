@@ -16,7 +16,8 @@
     <string name="make_name">开发</string>
     <string name="none">加载未完成</string>
     <string name="shipowner">加载未完成</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">加载中</string>
+    <string name="loading_success">加载成功</string>
 
     <string name="tidu_name">提督の名前</string>
     <string name="max">Level: 150 (MAX)</string>

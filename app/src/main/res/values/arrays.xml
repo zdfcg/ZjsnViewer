@@ -25,12 +25,21 @@
         <item>http://bbs.nga.cn/favicon.ico</item>
     </string-array>
 
-    <array name="range_color">
+    <array name="level_color">
         <item>@color/range_1_color</item>
         <item>@color/range_2_color</item>
         <item>@color/range_3_color</item>
         <item>@color/range_4_color</item>
         <item>@color/range_5_color</item>
         <item>@color/range_6_color</item>
+    </array>
+
+    <array name="level_background">
+        <item>@drawable/ship_star_bg1</item>
+        <item>@drawable/ship_star_bg2</item>
+        <item>@drawable/ship_star_bg3</item>
+        <item>@drawable/ship_star_bg4</item>
+        <item>@drawable/ship_star_bg5</item>
+        <item>@drawable/ship_star_bg6</item>
     </array>
 </resources>

@@ -1,6 +1,7 @@
 package me.crafter.android.zjsnviewer.ui.equipment.list;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.crafter.android.zjsnviewer.R;
+import me.crafter.android.zjsnviewer.ui.equipment.info.EquipmentInfoActivity;
 
 /**
  * @author traburiss
@@ -57,11 +59,11 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
     @Override
     public void onBindViewHolder(EquipmentHolder holder, int position) {
 
-        HashMap item = list.get(position);
+        HashMap<String, Object> item = list.get(position);
         String icon_url = item.get("equipment_pic").toString();
         String name = item.get("equipment_name").toString();
         String type = item.get("equipment_type").toString();
-        String id = context.getString(R.string.equipment_id) + ":" + item.get("equipment_id").toString();
+        String id = item.get("equipment_id").toString();
         String power = getPower(item);
         String time = context.getString(R.string.equipment_time) + ":" + item.get("equipment_make_time").toString();
         String threshold = context.getString(R.string.equipment_threshold) + ":" + item.get("equipment_make_threshold").toString();
@@ -71,7 +73,7 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
 
         int level = Integer.valueOf(item.get("equipment_level").toString());
         level = level < 1 || level > 6 ? 1 : level;
-        int color = context.getResources().obtainTypedArray(R.array.range_color).getColor(level-1,context.getResources().getColor(R.color.range_1_color));
+        int color = context.getResources().obtainTypedArray(R.array.level_color).getColor(level-1,context.getResources().getColor(R.color.range_1_color));
         holder.tv_equipment_name.setTextColor(color);
         holder.tv_equipment_name.setText(name);
 
@@ -86,6 +88,12 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
         holder.tv_equipment_threshold.setText(threshold);
 
         holder.tv_equipment_from.setText(from);
+
+        holder.itemView.setOnClickListener((view)-> {
+            Intent intent = new Intent(context, EquipmentInfoActivity.class);
+            intent.putExtra("data", item);
+            context.startActivity(intent);
+        });
     }
 
     private String getPower(HashMap item){
@@ -123,11 +131,6 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.Equi
 
         int equipment_lucky = Integer.valueOf(item.get("equipment_lucky").toString());
         if (equipment_lucky != 0) power.append("|").append(context.getString(R.string.equipment_lucky)).append(":").append(equipment_lucky);
-
-//        float equipment_antiair_correct = Float.valueOf(item.get("equipment_antiair_correct").toString());
-//        NumberFormat percent_format = NumberFormat.getPercentInstance();
-//        if (equipment_antiair_correct != 0)
-//            power.append("|").append(context.getString(R.string.equipment_antiair_correct)).append(":").append(percent_format.format(equipment_antiair_correct));
 
         String equipment_special_effect = item.get("equipment_special_effect").toString();
         if (!equipment_special_effect.isEmpty()) power.append("|").append(context.getString(R.string.equipment_special_effect)).append(":").append(equipment_special_effect);

@@ -146,7 +146,8 @@
                 android:value=".ui.preference.main.ZjsnViewer"/>
             >
         </activity>
-        <activity android:name=".ui.info.infoactivity.InfoActivity"
+        <activity
+            android:name=".ui.info.infoactivity.InfoActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -162,7 +163,8 @@
         </activity>
         <activity android:name=".ui.equipment.list.EquipmentListActivity">
         </activity>
-        <activity android:name=".ui.equipment.info.EquipmentInfoActivity">
+        <activity android:name=".ui.equipment.info.EquipmentInfoActivity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 

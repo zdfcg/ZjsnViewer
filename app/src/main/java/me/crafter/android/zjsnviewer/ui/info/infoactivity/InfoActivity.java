@@ -1,6 +1,5 @@
 package me.crafter.android.zjsnviewer.ui.info.infoactivity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Switch;
@@ -37,6 +37,7 @@ import me.crafter.android.zjsnviewer.ui.time.MakeTimeActivity;
 import me.crafter.android.zjsnviewer.ui.web.WebActivity;
 import me.crafter.android.zjsnviewer.util.DockInfo;
 import me.crafter.android.zjsnviewer.util.SharePreferenceUtil;
+import me.crafter.android.zjsnviewer.view.SupportViewPageSwipeRefreshLayout;
 
 public class InfoActivity extends BaseFragmentActivity {
 
@@ -49,6 +50,7 @@ public class InfoActivity extends BaseFragmentActivity {
     @BindView(R.id.tv_repair) TextView tv_repair;
     @BindView(R.id.tv_build) TextView tv_build;
     @BindView(R.id.tv_make) TextView tv_make;
+    @BindView(R.id.srl_refresh) SupportViewPageSwipeRefreshLayout srl_refresh;
     @BindView(R.id.vp_page) ViewPager vp_page;
 
     @BindView(R.id.ib_icon) ImageButton ib_icon;
@@ -95,14 +97,11 @@ public class InfoActivity extends BaseFragmentActivity {
         Boolean auto = SharePreferenceUtil.getInstance().getValue("auto_run", true);
         sw_title_on.setChecked(on);
         sw_title_auto_run.setChecked(auto);
-
-        handler.postDelayed(runnable, 2 * 1000);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        handler.removeCallbacks(runnable);
     }
 
     private void initData(){
@@ -115,7 +114,7 @@ public class InfoActivity extends BaseFragmentActivity {
 
     private void initView(){
 
-        refreshView();
+        srl_refresh.setColorSchemeResources(R.color.load_blue, R.color.load_green, R.color.load_yellow);
         initFragment();
     }
 
@@ -123,15 +122,22 @@ public class InfoActivity extends BaseFragmentActivity {
 
         RxView.clicks(ib_icon).subscribe(aVoid -> {
 
+            dl_drawer.openDrawer(Gravity.START);
+        });
+
+        srl_refresh.setOnRefreshListener(() -> {
+
             DockInfo.updateInterval = 0;
-            final ProgressDialog progressDialog = ProgressDialog.show(context, "", getString(R.string.loading));
-            progressDialog.setCancelable(true);
             UpdateTask task = new UpdateTask(context);
             task.setUpdateTaskStateChange(()-> {
 
-                    progressDialog.dismiss();
-                    refreshAllView();
-                });
+                Toast.makeText(InfoActivity.this,R.string.loading_success, Toast.LENGTH_SHORT).show();
+                srl_refresh.setRefreshing(false);
+                refreshAllView();
+                handler.removeCallbacks(runnable);
+                run_time = Long.valueOf(SharePreferenceUtil.getInstance().getValue("refresh", "60"))*1000;
+                handler.postDelayed(runnable, run_time);
+            });
             task.execute();
         });
 
@@ -172,11 +178,27 @@ public class InfoActivity extends BaseFragmentActivity {
             }
         });
 
-        RxView.clicks(tv_goto_build_time).subscribe(aVoid -> startActivity(BuildTimeActivity.class));
-        RxView.clicks(tv_goto_make_time).subscribe(aVoid -> startActivity(MakeTimeActivity.class));
-        RxView.clicks(tv_web).subscribe(aVoid -> startActivity(WebActivity.class));
-        RxView.clicks(tv_setting).subscribe(aVoid -> startActivity(ZjsnViewer.class));
-        RxView.clicks(tv_equipment).subscribe(aVoid -> startActivity(EquipmentListActivity.class));
+        RxView.clicks(tv_goto_build_time).subscribe(aVoid -> {
+            startActivity(BuildTimeActivity.class);
+            dl_drawer.closeDrawers();
+        });
+        RxView.clicks(tv_goto_make_time).subscribe(aVoid -> {
+            startActivity(MakeTimeActivity.class);
+            dl_drawer.closeDrawers();
+        });
+        RxView.clicks(tv_web).subscribe(aVoid -> {
+            startActivity(WebActivity.class);
+            dl_drawer.closeDrawers();
+        });
+        RxView.clicks(tv_setting).subscribe(aVoid -> {
+            startActivity(ZjsnViewer.class);
+            dl_drawer.closeDrawers();
+        });
+        RxView.clicks(tv_equipment).subscribe(aVoid -> {
+            startActivity(EquipmentListActivity.class);
+            dl_drawer.closeDrawers();
+        });
+        srl_refresh.startRefresh();
     }
 
     private void initFragment(){

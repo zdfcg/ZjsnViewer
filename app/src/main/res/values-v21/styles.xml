@@ -7,9 +7,10 @@
         <item name="actionMenuTextColor">@color/font_white</item>
         <item name="colorPrimary">@color/background_blue</item>
         <item name="colorPrimaryDark">@color/background_blue</item>
+
     </style>
 
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
